@@ -243,10 +243,11 @@ docker run -d --name prometheus \
 
 6. Prometheus 컨테이너 관리를 위한 docker 명령어
 
-컨테이너 중지 : docker stop prometheus
+컨테이너 중지 : `docker stop prometheus`
 
-컨테이너 재시작 : docker restart prometheus
+컨테이너 재시작 : `docker restart prometheus`
 
+컨테이너 IP 주소 확인 : `docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' node_exporter`
 
 7. Node exporter 사용하기
 
@@ -343,33 +344,82 @@ scrape_configs:
 
 
 <br>
-
----
-(추가 예정)
+<br>
+<br>
 
 8. Prometheus Web UI 대신 Grafana 사용하기
 
 
 #### 미리보는 Grafana와 Prometheus 연동:
 
-a. **Grafana 설치**:
-   Docker로 Grafana를 설치하고 실행할 수 있습니다.
+a. **Grafana 설치 및 접속**:
+   Docker로 Grafana 이미지를 pull 받아온 후 실행할 수 있다.
 
    ```bash
    docker run -d --name grafana -p 3000:3000 grafana/grafana
    ```
 
-   Grafana는 기본적으로 `http://localhost:3000`에서 접근할 수 있으며, 기본 로그인 정보는 `admin/admin`입니다.
+    Grafana는 기본적으로 `http://localhost:3000`에서 접근할 수 있으며, 
+ 
+    기본 로그인 정보는 `admin/admin`이다. 로그인 이후 비밀번호 변경이 가능하다.
 
-b. **Prometheus 데이터 소스 추가**:
-   Grafana에 로그인한 후, Prometheus를 데이터 소스로 추가합니다.
 
-   - Grafana 대시보드에서 **Configuration → Data Sources**로 이동합니다.
-   - 새로운 데이터 소스로 **Prometheus**를 선택합니다.
-   - URL에 Prometheus 서버 주소를 입력합니다. 일반적으로 `http://localhost:9090`입니다.
-   - 데이터 소스를 저장합니다.
+b. Prometheus 데이터 소스 추가
+    1) Grafana 대시보드 좌측 메뉴에서 **Configuration** (톱니바퀴 아이콘)을 클릭한 후, **Data Sources**를 선택
+    2) **Add data source** 버튼 클릭
+    3) 목록에서 **Prometheus** (최상단) 클릭
+    4) 설정 페이지에서 **HTTP** 섹션의 **URL** 필드 또는 **Connection**에 Prometheus 서버 주소(`http://localhost:9090`) 입력 
+       - 현재 테스트로 각각의 docker 컨테이너를 통해 올려서 나의 경우 `http://172.17.0.4:9090` 입력
+       - 만약 그라파나와 프로메테우스가 같은 환경에 설치되어있다면 `http://localhost:9090` 입력
+    5) 하단의 **Save & Test** 버튼으로 데이터 소스를 저장 후 연결 테스트 (연결이 성공적이면, "Data source is working")
 
-c. **대시보드 구성**:
-   Prometheus의 메트릭 데이터를 기반으로 Grafana에서 다양한 대시보드를 구성할 수 있습니다. Grafana는 메트릭의 시각화를 위한 다양한 그래프와 차트 옵션을 제공하므로, 데이터를 좀 더 직관적으로 분석할 수 있습니다.
+<br>
+
+이어서 Grafana에서 데이터 시각화를 위한 대시보드 추가 및 기능에 대해 소개하겠다.
+
+
+c. 대시보드 생성
+
+    1. Grafana 대시보드에서 **+** 아이콘 클릭 후 **Dashboard** 선택
+    2. 새 패널을 추가하기 위해 **Add an empty panel** 클릭
+    3. 쿼리 편집기에서 데이터 소스로 Prometheus 선택 후, PromQL 쿼리를 입력해 메트릭을 조회한다. 
+        - 예를 들어, CPU 사용량 : `node_cpu_seconds_total` 메트릭
+    4. Time Series로 되어있는 **Visualization** 탭에서 차트 유형 / 모양을 선택 및 조정할 수 있다.
+    5. **Panel Title**에서 패널 제목 설정이 가능
+    6. 대시보드 상단의 **Save dashboard** 아이콘을 클릭하여 대시보드 저장
+
+- 데이터 시각화 옵션
+    - **Graph**: 시계열 데이터의 변화를 선 그래프로 표시
+    - **Stat**: 단일 수치를 크게 표시하며, 최근 값이나 평균 등의 통계 표시
+    - **Gauge**: 게이지 형태로 현재 수치를 시각적으로 표현
+    - **Bar Gauge**: 여러 메트릭을 바 형태로 비교하여 표시
+    - **Table**: 메트릭을 표 형태로 나열
+
+
+d. Grafana 실습 예제: CPU 사용률 모니터링
+ 
+    1. 새 대시보드를 생성하고, 패널을 추가합니다.
+    2. PromQL 쿼리로 CPU 사용률을 계산하기 위해 쿼리를 입력: (Builder 탭에서 Code 탭으로 변경하여 입력)
+       ```sql
+       100 - (avg by (cpu) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)
+       ```
+    3. **Visualization**에서 **Graph** 유형 선택, 시간 범위와 리프레시 간격 설정
+    4. 대시보드에 여러 패널을 추가하여, 다양한 시스템 메트릭을 동시에 모니터링이 가능함
+
+
+이렇게 Grafana에서 Prometheus 데이터 소스를 추가하고, 
+
+기본적인 데이터 시각화 패널을 구성하여 복잡한 메트릭도 쉽게 모니터링할 수 있다.
+
+Grafana의 다양한 시각화 도구를 통해 데이터 분석과 모니터링을 효과적으로 수행할 수 있다.
+
+
+
+
+<br>
+
+---
+
+
 
 
