@@ -152,10 +152,8 @@ scrape할 job_name과 static_config를 등록하면 대상의 metric들을 수�
 
 ```yml
 scrape_configs:
-  # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
-  - job_name: 'prometheus'
-    # metrics_path defaults to '/metrics' & scheme defaults to 'http'.
-	static_configs:
+  - job_name: 'prometheus'  # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
+    static_configs:   # metrics_path defaults to '/metrics' & scheme defaults to 'http'.
 	  - targets: ['localhost:9090']
 
   - job_name: 'node'
@@ -180,9 +178,9 @@ rules 위반으로 판단되면 등록된 receiver(알람을 받을 대상)에�
 ```yml
 alerting:
   alertmanagers:
-	- static_configs:
-	  - targets:
-		- localhost:9093
+  - static_configs:
+  - targets:
+    - localhost:9093
 
 ```
 
@@ -382,34 +380,181 @@ scrape_configs:
 - **Node Exporter**가 제공하는 메트릭을 직접 확인하려면 `http://localhost:9100/metrics`로 접속해 데이터를 확인할 수 있음
 
 
+<br>
+
+### 8. Alertmanager 설정하기
+
+Prometheus의 Alertmanager는 모니터링 중 발생하는 경고를 관리하고, 이를 이메일, 슬랙, PagerDuty 등 다양한 채널로 전송할 수 있도록 설정할 수 있는 도구이다.
+
+아래는 Alertmanager를 Docker에서 실행하고 Prometheus와 연동하는 방법을 단계별로 설명한 것이다.
+
+#### a. **Alertmanager 이미지 다운로드 및 실행**
+
+```bash
+docker run -d --name alertmanager \
+  -p 9093:9093 \
+  -v /path/to/alertmanager/config.yml:/etc/alertmanager/config.yml \
+  prom/alertmanager
+```
+
+- 백그라운드에서, alertmanager라는 이름의 컨테이너를 실행
+- 이때 host의 9093 포트와 alertmanager의 9093 포트를 매핑
+- alertmanager의 설정 파일을 컨테이너 내부로 마운트
+
+
+#### b. **Alertmanager 설정 파일 작성**
+
+Alertmanager 설정 파일은 YAML 형식으로 작성되며, 
+
+이 파일에서 경고를 처리하는 방식과 경고를 받을 수신자(예: 이메일, 슬랙, PagerDuty 등)를 정의할 수 있다.  
+
+**설정 파일 예시 (`config.yml`)**
+
+```yaml
+global:
+  resolve_timeout: 5m  # 경고가 해결된 후 알람을 해제하기까지의 대기 시간 설정
+
+route:
+  receiver: 'email-notifications'  # 기본 수신자를 'email-notifications'로 설정
+
+receivers:
+  - name: 'email-notifications'  # 수신자의 이름 정의
+    email_configs:
+      - to: 'your-email@example.com'  # 알람을 받을 이메일 주소
+        from: 'alertmanager@example.com'  # 발신 이메일 주소
+        smarthost: 'smtp.example.com:587'  # SMTP 서버 주소와 포트
+        auth_username: 'your-email-username'  # SMTP 서버 로그인 사용자명
+        auth_password: 'your-email-password'  # SMTP 서버 로그인 비밀번호
+        require_tls: true  # TLS(암호화) 요구 여부 설정
+```
+
+**global** 섹션:
+
+- `resolve_timeout`: 알람이 해결된 후 Alertmanager가 경고를 해제하기 전에 대기하는 시간입니다. 
+- 여기서는 5분으로 설정되었습니다. 즉, 5분 후에 경고가 해결되면 알림을 중지합니다.
+
+**route** 섹션:
+- `receiver`: 기본적으로 경고를 전달할 수신자(경고가 발생했을 때 알림을 보낼 대상)를 지정합니다. 
+- 여기서는 `email-notifications`라는 이름을 가진 수신자에게 알람이 전송되도록 설정했습니다.
+
+**receivers** 섹션:
+- **receivers**는 경고를 처리하는 방법을 정의하는 부분입니다. 각 수신자는 경고를 받을 수신자 그룹을 정의합니다.
+- `name`: 수신자의 이름입니다. 여기서는 `email-notifications`라는 이름으로 정의되었습니다.
+- `email_configs`: 이메일을 통해 알람을 보내는 설정을 정의합니다.
+
+  - `to`: 알람을 받을 이메일 주소입니다. 예를 들어, `your-email@example.com`에 알람이 전송됩니다.
+  - `from`: 발신 이메일 주소입니다. 이 주소는 Alertmanager에서 발송하는 이메일의 발신자로 표시됩니다.
+  - `smarthost`: SMTP 서버의 주소와 포트를 입력합니다. 예를 들어, `smtp.example.com:587`은 SMTP 서버가 `smtp.example.com`이며 포트 587을 사용한다는 의미입니다. 이는 이메일을 전송하기 위해 필요한 서버 정보입니다.
+  - `auth_username`: SMTP 서버에 로그인하기 위한 사용자명입니다. 이메일 발송에 사용할 계정의 사용자명을 입력합니다.
+  - `auth_password`: SMTP 서버에 로그인하기 위한 비밀번호입니다. 이메일 발송에 사용할 계정의 비밀번호를 입력합니다.
+  - `require_tls`: 이메일 전송 시 TLS 암호화 사용 여부를 설정합니다. `true`로 설정하면 암호화된 연결을 통해 이메일이 전송됩니다.
+
+**SMTP 서버 정보란 무엇인가?**
+
+**SMTP**(Simple Mail Transfer Protocol)는 이메일을 보내기 위한 프로토콜입니다. 
+
+이메일을 전송하려면 SMTP 서버를 통해 이메일이 전달됩니다. 
+
+Alertmanager가 알람을 이메일로 보내기 위해서는 SMTP 서버의 정보를 제공해야 합니다.
+
+SMTP 서버 정보를 설정하는 방법:
+
+- **smarthost**: SMTP 서버의 주소와 포트입니다. 대표적인 SMTP 서버의 정보는 아래와 같습니다:
+  - **Gmail**:
+    - 서버 주소: `smtp.gmail.com`
+    - 포트: `587`
+  - **네이버 메일**:
+    - 서버 주소: `smtp.naver.com`
+    - 포트: `587`
+  - **다른 메일 서비스**는 해당 메일 서비스 제공자의 SMTP 서버 정보를 참조해야 합니다.
+  
+- **auth_username**: 이메일을 보내기 위해 로그인할 SMTP 서버 계정입니다. 이메일 전송을 허용하는 메일 계정의 사용자명을 입력합니다.
+  - 예: Gmail 계정의 이메일 주소(`your-email@gmail.com`).
+
+- **auth_password**: SMTP 서버 로그인 비밀번호입니다. 이 값은 이메일 발송을 허가받기 위해 계정의 비밀번호입니다.
+  - 예: Gmail 계정의 비밀번호. Gmail을 사용하는 경우, 2단계 인증을 사용한다면 **앱 비밀번호**를 생성해서 사용해야 합니다.
+
+##### Gmail을 사용한 SMTP 설정 예시:
+
+Gmail SMTP 서버를 사용하여 Alertmanager에서 이메일 알림을 설정하는 방법을 설명드리겠습니다.
+
+```yaml
+global:
+  resolve_timeout: 5m
+
+route:
+  receiver: 'email-notifications'
+
+receivers:
+  - name: 'email-notifications'
+    email_configs:
+      - to: 'your-email@gmail.com'
+        from: 'alertmanager@gmail.com'
+        smarthost: 'smtp.gmail.com:587'
+        auth_username: 'your-email@gmail.com'
+        auth_password: 'your-app-password'  # Gmail 앱 비밀번호 사용
+        require_tls: true
+```
+
+> ⚠️ **Gmail을 사용할 때 주의할 점**:
+> 1. Gmail은 보안 상의 이유로 기본 비밀번호로는 외부 애플리케이션에서 SMTP를 사용할 수 없습니다. **앱 비밀번호**라는 별도의 비밀번호를 생성해야 합니다.
+> 2. 앱 비밀번호를 생성하려면:
+>    - Google 계정 설정에서 **2단계 인증**을 활성화해야 합니다.
+>    - 그런 다음 **앱 비밀번호**를 생성하여 SMTP 인증에 사용할 수 있습니다.
+>    - [앱 비밀번호 생성 방법](https://support.google.com/accounts/answer/185833?hl=ko)
+
+
+
+설정 파일을 작성한 후, Alertmanager 컨테이너를 시작하거나 재시작할 때 이 파일을 마운트하여 사용합니다.
+
+```bash
+docker run -d --name alertmanager \
+  -p 9093:9093 \
+  -v ~/prometheus/alertmanager/config.yml:/etc/alertmanager/config.yml \
+  prom/alertmanager
+```
+
+이렇게 하면 Alertmanager는 설정 파일에 정의된 수신자(여기서는 이메일)를 통해 알림을 전송할 수 있습니다.
+
+
+- **Alertmanager 설정 파일**은 YAML 형식으로 작성하며, 경고가 발생할 때 알림을 전송할 수신자 및 메일 서버 정보를 포함합니다.
+- **SMTP 서버**는 이메일을 발송하기 위한 서버 정보이며, 이를 통해 Alertmanager가 이메일을 발송할 수 있습니다.
+- 설정 파일을 **마운트**한 상태로 Alertmanager Docker 컨테이너를 실행하면 이메일을 통한 경고 알림을 받을 수 있습니다.
+
+
+- 추후 프로메테우스의 설정파일에 Alertmanager의 주소를 추가하여, 알람을 받을 수 있도록 설정하면 된다.
+
+
+
 
 <br>
 <br>
 <br>
 
-### 8. Prometheus Web UI 대신 Grafana 사용하기
+### 9. Prometheus Web UI 대신 Grafana 사용하기
 
 
 #### a. **Grafana 설치 및 접속**:
    Docker로 Grafana 이미지를 pull 받아온 후 실행할 수 있다.
 
-   ```bash
-   docker run -d --name grafana -p 3000:3000 grafana/grafana
-   ```
+```bash
+docker run -d --name grafana -p 3000:3000 grafana/grafana
+```
 
-    Grafana는 기본적으로 `http://localhost:3000`에서 접근할 수 있으며, 
+Grafana는 기본적으로 `http://localhost:3000`에서 접근할 수 있으며, 
  
-    기본 로그인 정보는 `admin/admin`이다. 로그인 이후 비밀번호 변경이 가능하다.
+기본 로그인 정보는 `admin/admin`이다. 로그인 이후 비밀번호 변경이 가능하다.
 
 
 #### b. Prometheus 데이터 소스 추가
-    1) Grafana 대시보드 좌측 메뉴에서 **Configuration** (톱니바퀴 아이콘)을 클릭한 후, **Data Sources**를 선택
-    2) **Add data source** 버튼 클릭
-    3) 목록에서 **Prometheus** (최상단) 클릭
-    4) 설정 페이지에서 **HTTP** 섹션의 **URL** 필드 또는 **Connection**에 Prometheus 서버 주소(`http://localhost:9090`) 입력 
-       - 현재 테스트로 각각의 docker 컨테이너를 통해 올려서 나의 경우 `http://172.17.0.4:9090` 입력
-       - 만약 그라파나와 프로메테우스가 같은 환경에 설치되어있다면 `http://localhost:9090` 입력
-    5) 하단의 **Save & Test** 버튼으로 데이터 소스를 저장 후 연결 테스트 (연결이 성공적이면, "Data source is working")
+
+1) Grafana 대시보드 좌측 메뉴에서 **Configuration** (톱니바퀴 아이콘)을 클릭한 후, **Data Sources**를 선택
+2) **Add data source** 버튼 클릭
+3) 목록에서 **Prometheus** (최상단) 클릭
+4) 설정 페이지에서 **HTTP** 섹션의 **URL** 필드 또는 **Connection**에 Prometheus 서버 주소(`http://localhost:9090`) 입력 
+    - 현재 테스트로 각각의 docker 컨테이너를 통해 올려서 나의 경우 `http://172.17.0.4:9090` 입력
+    - 만약 그라파나와 프로메테우스가 같은 환경에 설치되어있다면 `http://localhost:9090` 입력
+5) 하단의 **Save & Test** 버튼으로 데이터 소스를 저장 후 연결 테스트 (연결이 성공적이면, "Data source is working")
 
 <br>
 
@@ -418,13 +563,13 @@ scrape_configs:
 
 #### c. 대시보드 생성
 
-    1. Grafana 대시보드에서 **+** 아이콘 클릭 후 **Dashboard** 선택
-    2. 새 패널을 추가하기 위해 **Add an empty panel** 클릭
-    3. 쿼리 편집기에서 데이터 소스로 Prometheus 선택 후, PromQL 쿼리를 입력해 메트릭을 조회한다. 
-        - 예를 들어, CPU 사용량 : `node_cpu_seconds_total` 메트릭
-    4. Time Series로 되어있는 **Visualization** 탭에서 차트 유형 / 모양을 선택 및 조정할 수 있다.
-    5. **Panel Title**에서 패널 제목 설정이 가능
-    6. 대시보드 상단의 **Save dashboard** 아이콘을 클릭하여 대시보드 저장
+1. Grafana 대시보드에서 **+** 아이콘 클릭 후 **Dashboard** 선택
+2. 새 패널을 추가하기 위해 **Add an empty panel** 클릭
+3. 쿼리 편집기에서 데이터 소스로 Prometheus 선택 후, PromQL 쿼리를 입력해 메트릭을 조회한다. 
+    - 예를 들어, CPU 사용량 : `node_cpu_seconds_total` 메트릭
+4. Time Series로 되어있는 **Visualization** 탭에서 차트 유형 / 모양을 선택 및 조정할 수 있다.
+5. **Panel Title**에서 패널 제목 설정이 가능
+6. 대시보드 상단의 **Save dashboard** 아이콘을 클릭하여 대시보드 저장
 
 - 데이터 시각화 옵션
     - **Graph**: 시계열 데이터의 변화를 선 그래프로 표시
@@ -436,13 +581,13 @@ scrape_configs:
 
 #### d. Grafana 실습 예제: CPU 사용률 모니터링
  
-    1. 새 대시보드를 생성하고, 패널을 추가합니다.
-    2. PromQL 쿼리로 CPU 사용률을 계산하기 위해 쿼리를 입력: (Builder 탭에서 Code 탭으로 변경하여 입력)
-       ```sql
-       100 - (avg by (cpu) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)
-       ```
-    3. **Visualization**에서 **Graph** 유형 선택, 시간 범위와 리프레시 간격 설정
-    4. 대시보드에 여러 패널을 추가하여, 다양한 시스템 메트릭을 동시에 모니터링이 가능함
+1. 새 대시보드를 생성하고, 패널을 추가합니다.
+2. PromQL 쿼리로 CPU 사용률을 계산하기 위해 쿼리를 입력: (Builder 탭에서 Code 탭으로 변경하여 입력)
+    ```sql
+    100 - (avg by (cpu) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)
+    ```
+3. **Visualization**에서 **Graph** 유형 선택, 시간 범위와 리프레시 간격 설정
+4. 대시보드에 여러 패널을 추가하여, 다양한 시스템 메트릭을 동시에 모니터링이 가능함
 
 
 이렇게 Grafana에서 Prometheus 데이터 소스를 추가하고, 
@@ -450,6 +595,11 @@ scrape_configs:
 기본적인 데이터 시각화 패널을 구성하여 복잡한 메트릭도 쉽게 모니터링할 수 있다.
 
 Grafana의 다양한 시각화 도구를 통해 데이터 분석과 모니터링을 효과적으로 수행할 수 있다.
+
+
+<br>
+
+
 
 
 
