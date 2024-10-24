@@ -154,11 +154,11 @@ scrape할 job_name과 static_config를 등록하면 대상의 metric들을 수�
 scrape_configs:
   - job_name: 'prometheus'  # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
     static_configs:   # metrics_path defaults to '/metrics' & scheme defaults to 'http'.
-	  - targets: ['localhost:9090']
+      - targets: ['localhost:9090']
 
   - job_name: 'node'
-	static_configs:
-	  - targets: ['localhost:9100']
+    static_configs:
+      - targets: ['localhost:9100']
 
 ```
 
