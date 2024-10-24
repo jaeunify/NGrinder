@@ -148,7 +148,7 @@ exporter에는 공개 되어있는 종류가 굉장히 많기 때문에 필요�
 
 prometheus.yml 파일
 
-scrape할 job_name과 static_config를 등록하면 대상의 metric들을 수집할 수 있다.
+scrape할 job_name과 static_config를 등록하면 대상의 metric들을 수집할 수 있다. 
 
 ```yml
 scrape_configs:
