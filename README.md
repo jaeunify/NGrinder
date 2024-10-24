@@ -189,12 +189,12 @@ alerting:
 
 Prometheus를 공식 홈페이지에서 설치할 수도 있지만, docker 이미지를 다운로드 후 명령어로 실행해보자.
 
-1. wsl에서 docker 버전을 확인한다.
+### 1. wsl에서 docker 버전을 확인한다.
 ```bash
 docker -v
 ```
 
-2. docker pull 명령어로 prometheus 이미지를 다운로드한다.
+### 2. docker pull 명령어로 prometheus 이미지를 다운로드한다.
 
 ```bash
 mkdir ~/prometheus
@@ -202,7 +202,7 @@ vi ~/prometheus/prometheus.yml
 
 ```
 
-3. prometheus.yml 파일을 생성한다. (이때 Prometheus 자기 자신을 모니터링하도록 구성했다)
+### 3. prometheus.yml 파일을 생성한다. (이때 Prometheus 자기 자신을 모니터링하도록 구성했다)
 
 ```bash
 docker pull prom/prometheus
@@ -220,7 +220,7 @@ scrape_configs:
 
 ```
 
-4. Docker에서 prometheus 컨테이너를 실행한다.
+### 4. Docker에서 prometheus 컨테이너를 실행한다.
 
 ```bash
 docker run -d --name prometheus \
@@ -238,10 +238,10 @@ docker run -d --name prometheus \
 -v ~/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml: 로컬 설정 파일을 컨테이너 내부로 마운트
 
 
-5. 정상적으로 실행되었다면, 브라우저에서 localhost:9090으로 접속하여 Prometheus Web UI 확인이 가능하다.
+### 5. 정상적으로 실행되었다면, 브라우저에서 localhost:9090으로 접속하여 Prometheus Web UI 확인이 가능하다.
 
 
-6. Prometheus 컨테이너 관리를 위한 docker 명령어
+### 6. Prometheus 컨테이너 관리를 위한 docker 명령어
 
 컨테이너 중지 : `docker stop prometheus`
 
@@ -249,7 +249,7 @@ docker run -d --name prometheus \
 
 컨테이너 IP 주소 확인 : `docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' node_exporter`
 
-7. Node exporter 사용하기
+### 7. Node exporter 사용하기
 
 exporter란, Prometheus가 모니터링할 수 있는 metric을 제공하는 엔드포인트(서버)를 생성하는 애플리케이션이다.
 - 여기서 말하는 엔드포인트란? 메트릭 데이터를 제공하는 URL 또는 네트워크 경로를 의미
@@ -336,7 +336,7 @@ scrape_configs:
 
    이 페이지에는 Node Exporter가 수집한 CPU, 메모리, 네트워크, 디스크 관련 다양한 메트릭 데이터가 표시된다.
 
-#### 요약:
+#### Prometheus & Node Exporter 정리 :
 - Prometheus 웹 UI에서 **Targets** 페이지(`http://localhost:9090/targets`)로 가서 Node Exporter가 `UP` 상태인지 확인
 - **Graph** 페이지에서 PromQL을 사용해 수집된 메트릭을 쿼리할 수 있음
 - **Node Exporter**가 제공하는 메트릭을 직접 확인하려면 `http://localhost:9100/metrics`로 접속해 데이터를 확인할 수 있음
@@ -347,12 +347,10 @@ scrape_configs:
 <br>
 <br>
 
-8. Prometheus Web UI 대신 Grafana 사용하기
+### 8. Prometheus Web UI 대신 Grafana 사용하기
 
 
-#### 미리보는 Grafana와 Prometheus 연동:
-
-a. **Grafana 설치 및 접속**:
+#### a. **Grafana 설치 및 접속**:
    Docker로 Grafana 이미지를 pull 받아온 후 실행할 수 있다.
 
    ```bash
@@ -364,7 +362,7 @@ a. **Grafana 설치 및 접속**:
     기본 로그인 정보는 `admin/admin`이다. 로그인 이후 비밀번호 변경이 가능하다.
 
 
-b. Prometheus 데이터 소스 추가
+#### b. Prometheus 데이터 소스 추가
     1) Grafana 대시보드 좌측 메뉴에서 **Configuration** (톱니바퀴 아이콘)을 클릭한 후, **Data Sources**를 선택
     2) **Add data source** 버튼 클릭
     3) 목록에서 **Prometheus** (최상단) 클릭
@@ -378,7 +376,7 @@ b. Prometheus 데이터 소스 추가
 이어서 Grafana에서 데이터 시각화를 위한 대시보드 추가 및 기능에 대해 소개하겠다.
 
 
-c. 대시보드 생성
+#### c. 대시보드 생성
 
     1. Grafana 대시보드에서 **+** 아이콘 클릭 후 **Dashboard** 선택
     2. 새 패널을 추가하기 위해 **Add an empty panel** 클릭
@@ -396,7 +394,7 @@ c. 대시보드 생성
     - **Table**: 메트릭을 표 형태로 나열
 
 
-d. Grafana 실습 예제: CPU 사용률 모니터링
+#### d. Grafana 실습 예제: CPU 사용률 모니터링
  
     1. 새 대시보드를 생성하고, 패널을 추가합니다.
     2. PromQL 쿼리로 CPU 사용률을 계산하기 위해 쿼리를 입력: (Builder 탭에서 Code 탭으로 변경하여 입력)
@@ -419,7 +417,5 @@ Grafana의 다양한 시각화 도구를 통해 데이터 분석과 모니터링
 <br>
 
 ---
-
-
 
 
