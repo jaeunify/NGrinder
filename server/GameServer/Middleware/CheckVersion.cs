@@ -22,6 +22,13 @@ public class CheckVersion
 
     public async Task Invoke(HttpContext httpContext)
     {
+        // /metrics 엔드포인트는 버전 체크를 생략 (Prometheus 스크랩)
+        if (context.Request.Path.StartsWithSegments("/metrics"))
+        {
+            await _next(context);
+            return;
+        }
+
         var appVersion = httpContext.Request.Headers["AppVersion"].ToString();
         var dataVersion = httpContext.Request.Headers["DataVersion"].ToString();
 

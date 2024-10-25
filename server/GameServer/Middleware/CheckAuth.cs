@@ -22,6 +22,13 @@ public class CheckAuth
 
     public async Task Invoke(HttpContext context)
     {
+        // /metrics 엔드포인트는 버전 체크를 생략 (Prometheus 스크랩)
+        if (context.Request.Path.StartsWithSegments("/metrics"))
+        {
+            await _next(context);
+            return;
+        }
+
         if (IsLoginOrRegisterRequest(context))
         {
             await _next(context);
