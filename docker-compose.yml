@@ -87,6 +87,7 @@ services:
       - gameserver
       - hiveserver
       - matchserver
+  
   grafana:
     image: grafana/grafana
     ports:
@@ -99,6 +100,13 @@ services:
       - GF_SECURITY_ADMIN_PASSWORD=admin  # Admin 패스워드 설정 (옵션)
     volumes:
       - grafana-data:/var/lib/grafana
+
+  nodeexporter:
+    image: prom/node-exporter
+    ports:
+      - "9100:9100"  # Node Exporter 포트
+    networks:
+      - game-network
 
 
 networks:
