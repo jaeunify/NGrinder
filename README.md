@@ -328,6 +328,37 @@ scrape_configs:
 
 지금까지 Node Exporter를 Prometheus에 연동하는 과정이다.
 
+
+Node Exporter를 연결하지 않으면, 
+
+**서버 자체의 시스템 리소스 지표** (예: CPU 사용률, 메모리 사용률, 디스크 사용량 등)를 Prometheus가 수집할 수 없다.
+
+따라서, Prometheus로 서버의 하드웨어 성능과 상태를 모니터링하려면 Node Exporter가 필수이다.
+
+다른 서비스들의 애플리케이션 성능 지표 (예: HTTP 요청 응답 시간, 오류율 등)는 Prometheus에서 애플리케이션 수준의 메트릭을 통해 모니터링할 수 있다. 
+
+즉, 서버 자체 상태와 무관하게 애플리케이션 메트릭은 수집이 가능하다. 
+
+Node Exporter 없는 경우:
+- **가능한 모니터링**: 애플리케이션에서 제공하는 자체 메트릭 (HTTP 요청 시간, DB 쿼리 시간 등).
+- **불가능한 모니터링**: 서버 자체의 CPU, 메모리, 디스크 사용률 등의 리소스 상태.
+
+
+#### 구조
+
+Node Exporter : 서버의 CPU, 메모리, 디스크와 같은 시스템 리소스 지표를 수집하는 Prometheus용 에이전트
+
+Prometheus : 이 Node Exporter로부터 데이터를 수집하여 시스템 상태 모니터링 가능
+
+1. **Node Exporter**: 서버의 리소스 상태를 수집하고 `/metrics` 엔드포인트로 노출
+2. **Prometheus**: `prometheus.yml` 설정에 따라 Node Exporter의 엔드포인트(예: `nodeexporter:9100`)로부터 데이터를 주기적으로 스크레이핑하여 저장
+3. **Grafana**: Prometheus가 수집한 데이터를 시각화하는 툴입니다. 
+    - Grafana는 Node Exporter에 직접 연결되는 것이 아니라, **Prometheus 데이터 소스**를 설정하여 해당 데이터를 시각화
+
+
+
+<br>
+
 이제 Prometheus가 Node Exporter로부터 데이터를 제대로 수집하고 있는지 확인해보자. 
 
 
@@ -612,4 +643,16 @@ Grafana의 다양한 시각화 도구를 통해 데이터 분석과 모니터링
 # Grafana
 
 그라파나는 데이터를 시각화하여 분석 및 모니터링을 용이하게 해주는 오픈소스 분석 플랫폼이다.
+
+앞 선 과정처럼 Prometheus를 통해 수집한 데이터를 Grafana에서 시각화하고, 대시보드를 구성해 확인할 수 있다.
+
+이때 수집한 metric을 promql을 통해 시각화할 수 있다.
+
+
+
+<br>
+
+이제 아래 코드는 프로메테우스에서 node_exporter를 활용해서 수집한 metric을 promql을 통해 시각화 하는 실습 코드이다.
+
+promql을 통해 Grafana에서 데이터를 시각해 볼 수 있다.
 
