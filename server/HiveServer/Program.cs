@@ -3,6 +3,7 @@ using HiveServer.Services.Interfaces;
 using HiveServer.Services;
 using AutoMapper;
 using HiveServer;
+using Prometheus;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -47,6 +48,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1"));
 }
+
+// Prometheus 미들웨어 추가
+app.UseMetricServer();   // /metrics 엔드포인트 제공
+app.UseHttpMetrics();     // HTTP 요청에 대한 메트릭 수집
 
 // CORS 미들웨어 추가
 app.UseCors("AllowAllOrigins");

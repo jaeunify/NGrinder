@@ -2,6 +2,7 @@ using MatchServer.Repository;
 using MatchServer;
 using MatchServer.Services.Interfaces;
 using MatchServer.Services;
+using Prometheus;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,6 +34,10 @@ builder.Logging.SetMinimumLevel(LogLevel.Information);
 builder.Services.AddControllers();
 
 var app = builder.Build();
+
+// Prometheus 미들웨어 추가
+app.UseMetricServer();   // /metrics 엔드포인트 제공
+app.UseHttpMetrics();     // HTTP 요청에 대한 메트릭 수집
 
 // CORS 미들웨어 추가
 app.UseCors("AllowAllOrigins");

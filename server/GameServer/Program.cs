@@ -6,6 +6,7 @@ using GameServer.Repository.Interfaces;
 using ZLogger;
 using System.Text.Json;
 using ZLogger.Formatters;
+using Prometheus;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -68,10 +69,14 @@ builder.Services.AddControllers();
 
 var app = builder.Build();
 
+// Prometheus 미들웨어 추가
+app.UseMetricServer();   // /metrics 엔드포인트 제공
+app.UseHttpMetrics();     // HTTP 요청에 대한 메트릭 수집
+
 app.UseCors("AllowAllOrigins");
 
-app.UseMiddleware<GameServer.Middleware.CheckVersion>();
-app.UseMiddleware<GameServer.Middleware.CheckAuth>();
+app.UseMiddleware<GameServer.Middleware.CheckVersion>(); // 여기서 http 요청에 대한 버전 체크
+app.UseMiddleware<GameServer.Middleware.CheckAuth>();    // 여기서 http 요청에 대한 유저 인증 체크
 
 app.MapControllers();
 
