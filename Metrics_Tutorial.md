@@ -1,0 +1,154 @@
+# Prometheus & Grafana 모니터링 실습
+
+
+## 머신 상태 모니터링
+
+프로메테우스에서 머신 상태 모니터링 시 node_exporter 사용하여 실행 중인 서버의 cpu, 메모리, 디스크 사용률과 같은 지표를 수집할 수 있다.
+
+### 가용 메모리 사용률
+
+#### 가용 가능한 메모리 확인
+```bash
+free -m
+```
+
+#### promql을 통해 Grafana에서 데이터 시각화
+
+1. 가용하고있는 메모리 확인
+```promql
+node_memory_Active_bytes / node_memory_MemTotal_bytes
+```
+
+2. 가용한 것을 제외한, 사용 가능한 메모리 확인
+```promql
+(1 - (node_memory_Active_bytes / node_memory_MemTotal_bytes)) * 100
+```
+
+
+### 평균 cpu 사용률
+
+```promql
+100 - (avg by (cpu) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)
+```
+
+cpu 평균 사용률을 나타낸다.
+- avg by (cpu) : cpu에 대한 평균
+- node_cpu_seconds_total{mode="idle"}[5m] : 5m 간 mode가 idle 상태인 cpu 누적 사용
+- 전체 - 쉬고있는 cpu 사용률 : 현재 이용률
+
+나의 경우 local 머신에서 돌리고 있어서, cpu가 인텔 코어 i7 12700F 라서 코어 수는 12개, 총 스레드 수는 20개 이다.
+그래프를 보면 0번부터 19번까지의 코어를 확인할 수 있다. (스레드 수?)
+
+### 누적 cpu 사용률
+
+```promql
+node_cpu_seconds_total
+```
+
+누적 cpu 사용 시간을 나타낸다.
+- Grafana에서는 단위가 K로 확인되어 4K = 4000초로 확인하면 된다.
+
+### 디스크 용량 사용률
+
+윈도우에서의 디스크 용량 사용률
+
+```promql
+100 - (windows_logical_disk_free_bytes / windows_logical_disk_size_bytes) * 100
+```
+
+리눅스에서의 디스크 용량 사용률
+
+```promql
+100 - ((node_filesystem_free_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"}) * 100)
+```
+
+```promql
+100 - ((node_filesystem_free_bytes{mountpoint="/mnt/c"} / node_filesystem_size_bytes{mountpoint="/mnt/c"}) * 100)
+```
+
+디스크 용량 사용률의 의미 : 사용 중인 용량이 전체 디스크 용량 대비 몇퍼센트인지
+
+
+### 네트워크 사용률
+
+- rate 함수로 5분 동안 초당 바이트 수의 평균을 계산 후
+- bps(bit per second)로 변환하기 위해 * 8
+
+#### 네트워크 전송 속도
+
+```promql
+rate(node_network_transmit_bytes_total{device="eth0"}[5m]) * 8
+```
+
+#### 네트워크 수신 속도
+
+```promql
+rate(node_network_receive_bytes_total{device="eth0"}[5m]) * 8
+```
+ 
+Prometheus의 웹 UI에서 네트워크 장치 이름을 조회 후 promql 문을 작성하자
+1. http://localhost:9090 으로 이동 후 Graph 탭 클릭
+2. Expression에 `node_network_transmit_bytes_total` 입력 후 Execute 클릭 후 장치 명 확인
+
+나의 경우 `eth0` 로 명령어를 작성했다.
+
+
+### CPU 이용률(%)
+
+```promql
+100 - (avg by (instance) (irate(windows_cpu_time_total{mode="idle"}[5m])) * 100)
+```
+
+```promql
+100 - (avg by (instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)
+```
+
+- `windows_cpu_time_total{mode="idle"}` : 코어 별 CPU 유휴 시간 (컴퓨터 부팅 후 CPU가 일을 하지 않은 누적 시간)
+- `irate(windows_cpu_time_total{mode="idle"}[5m])` : 코어 별 CPU 유휴 시간 비율
+	
+	+ rate() : 주어진 시간에 대해 (현재 값 - 주어진 시간만큼 전의 값) / (현재 시간 - 주어진 시간만큼 전의 시간)으로 계산
+	    - 만약 식에서 5분으로 주어졌다면 최근 5분 간 양 끝 점 사이의 차이를 1초 단위로 평균 낸 값이다.
+
+	+ irate() : (현재 값 - 바로 이전의 값) / (현재 시간 - 바로 이전의 시간)으로 계산
+	    - 주어진 시간에 관계 없이 현재 데이터와 가장 최근의 데이터 사이의 차이를 1초 단위로 평균 낸 값이다. 
+	    - 주어진 시간 값은 irate를 사용할 때 데이터 시간 간격의 최댓값으로써 두 데이터 사이의 시간 간격보다 크다면 어떤 값이든 같은 결과를 반환한다. 
+		- 반대로 주어진 시간 값이 두 데이터 사이의 시간 간격보다 작다면 데이터가 없는 것으로 판단한다.
+
+	+ rate()는 그래프의 기울기가 부드럽게 바뀌므로 전체적인 값의 변화를 볼 때 적합하고, 
+	  
+	+ irate()는 그래프의 기울기가 보다 급격하게 바뀔 수 있어 CPU 또는 메모리 상태와 같이 짧은 시간 내에 값이 변하는 걸 감지해야 할 때 사용된다.
+ 
+
+- `avg by (instance) (irate(windows_cpu_time_total{mode="idle"}[5m]))` : 인스턴스 별 CPU 유휴 시간 비율 평균
+
+
+
+### 최근 1분간 1초마다 들어온 HTTP 요청의 평균 개수
+
+```promql
+sum by (endpoint) (rate(http_requests_received_total[1m]))
+```
+
+- `http_requests_received_total` : HTTP 요청의 누적 개수
+- `rate(http_requests_received_total[1m])` : 최근 1분 간 HTTP 요청 개수 / 60초
+
+endpoint 별로 HTTP 요청 그래프를 확인할 수 있다.
+
+### 최근 5분간 엔드포인트 별 HTTP 요청 평균 처리 시간(초)
+
+```promql
+avg by (endpoint) (rate(http_request_duration_seconds_sum[5m]) / rate(http_request_duration_seconds_count[5m]))
+```
+
+- `http_request_duration_seconds_sum` : HTTP 요청 처리 누적 시간
+- `rate(http_request_duration_seconds_sum[5m])` : 최근 5분 간 1초마다 HTTP 요청을 처리하는 데 소모한 시간
+- `(rate(http_request_duration_seconds_sum[5m]) / rate(http_request_duration_seconds_count[5m]))` : 최근 5분 간 HTTP 요청당 평균 처리 시간
+
+
+## 참고
+
+프로메테우스에는 target 데이터를 수집하는 주기인 scrap time이 존재한다.
+
+default 값은 1minute이며, `prometheus.yml` 파일에서 scrap_interval 를 수정하면 되는데, 
+
+너무 짧게 (ex. 1ms) 설정하면 문제가 발생할 수 있다.
