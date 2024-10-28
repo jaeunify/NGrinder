@@ -1,4 +1,4 @@
-﻿global:
+global:
   scrape_interval: 15s  # 기본 스크레이프 간격을 15초로 설정
   # evaluation_interval: 15s
 
@@ -16,13 +16,13 @@
 scrape_configs:
     - job_name: 'gameserver'
       static_configs:
-        - targets: ['gameserver:8080']  # GameServer의 /metrics 엔드포인트 # prometheus_grafana-gameserver-1
+        - targets: ['prometheus_grafana-gameserver-1:8080']  # GameServer의 /metrics 엔드포인트
     - job_name: 'hiveserver'
       static_configs:
-        - targets: ['hiveserver:8080']  # HiveServer의 /metrics 엔드포인트
+        - targets: ['prometheus_grafana-hiveserver-1:8080']  # HiveServer의 /metrics 엔드포인트
     - job_name: 'matchserver'
       static_configs:
-        - targets: ['matchserver:8080']  # MatchServer의 /metrics 엔드포인트
+        - targets: ['prometheus_grafana-matchserver-1:8080']  # MatchServer의 /metrics 엔드포인트
     # - job_name: 'prometheus'  # Prometheus 자신을 모니터링하는 기본 설정
     #   static_configs:
     #   - targets: ['localhost:9090']  # Prometheus 웹 UI를 스크랩
