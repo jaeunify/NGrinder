@@ -236,3 +236,164 @@ rate(http_requests_received_total{endpoint="Login"}[1m])
 - [] 값, 즉 간격이 너무 짧다면 metric을 수집할 수 없다.
 
 
+
+
+## C#에서의 GC 정보
+
+### 애플리케이션 내 Garbage Collection 총 수행 횟수
+
+```promql
+dotnet_collection_count_total
+```
+- 0세대, 1세대, 2세대 수집 횟수 확인 가능
+
+
+### 세대별 GC 수행 횟수
+
+```promql
+dotnet_collection_count_total{generation="0"}
+```
+- generation="0" : 0세대 수집 횟수
+
+
+### 세대별 GC 평균 수집 횟수
+
+```promql
+rate(dotnet_collection_count_total[1m])
+```
+
+- dotnet_collection_count_total : 전체 gc 세대 별 누적 횟수
+- rate(dotnet_collection_count_total[1m]) : rate 함수를 통해 1분 간의 평균 수집 횟수 확인 가능
+
+
+---
+# Prometheus 총정리 (with C# asp.net core)
+
+## Prometheus Metrics type
+
+1. Counter : 증가하는 값
+
+2. Gauge : 증가, 감소하는 값
+
+3. Histogram : 값의 범위를 나누어 저장
+
+4. Summary : Histogram과 유사하지만 quantile을 사용하여 값의 분포를 저장
+
+
+## ASP.NET Core에서 Prometheus 사용하기
+
+### ASP.NET core 에서의 설정
+
+- nuget에서 "Install-Package prometheus-net.AspNetCore"을 통해 패키지를 설치한다.
+- http request를 모니터링하기 위해 "app.UseRoutin()"이후 "app.UseHttpMetrics()"와 "app.UseMetricsServer()"를 추가한다.
+
+### 특정 http request를 Count하기
+
+- 기본적으로 PromQL "http_request_duration_seconds_count"을 통해 모든 http request를 모니터링 할 수 있지만 
+- 특정 http request만을 모니터링 할 수 있도록 Counter 메트릭을 생성할 수 있다.
+
+- `API_Server_LoginCounter` 쿼리로 모니터링 할 수 있다.
+
+### 런타임 모니터링
+- build, jit, garbage collection(GC), excption, contetion 등의 정보들을 모니터링 한다. 
+- nuget에서 prometheus-net.DotNetRuntime 패키지를 설치
+- Program.cs 에서 collector를 선언하여 사용한다.
+
+	```csharp
+	// default
+	IDisposable collector = DotNetRuntimeStatsBuilder.Default().StartCollecting();
+ 
+	// 원하는 정보만 모니터링
+	IDisposable collector = DotNetRuntimeStatsBuilder
+		.Customize()
+		.WithContentionStats()
+		.WithJitStats()
+		.WithThreadPoolStats()
+		.WithGcStats()
+		.WithExceptionStats()
+		.StartCollecting();
+	```
+
+### 소켓
+
+- nuget에서 "Install-Package prometheus-net"를 통해 패키지를 설치한다.
+- program.cs
+
+	```csharp
+	// http://localhost:5002/metrics 프로메테우스 서버
+	var prometheusServer = new MetricServer(hostname:"127.0.0.1",port: 5002);
+	prometheusServer.Start();
+	```
+
+
+- 런타임 모니터링 : build, jit, garbage collection(GC), excption, contetion 등의 정보
+
+	```csharp
+	// default
+	IDisposable collector = DotNetRuntimeStatsBuilder.Default().StartCollecting();
+ 
+	// 원하는 정보만 모니터링
+	IDisposable collector = DotNetRuntimeStatsBuilder
+		.Customize()
+		.WithGcStats()
+		.WithContentionStats()
+		.WithThreadPoolStats()
+		.WithJitStats()
+		.WithExceptionStats()
+		.WithSocketStats()
+	   .StartCollecting();
+
+   ```
+
+### 서버 리소스
+
+- CPU, Memory, Network 등 하드웨어 정보를 모니터링
+
+- Node exporter (linux)
+
+#### CPU Load
+
+sum by (mode) (rate(windows_cpu_time_total[5m]))
+
+#### Memory Usage
+
+windows_cs_physical_memory_bytes - windows_os_physical_memory_free_bytes
+
+#### Network
+
+rate(windows_net_bytes_sent_total[5m])
+
+#### Disk
+
+rate(windows_logical_disk_split_ios_total{volume !~"HarddiskVolume.+"}[5m])
+
+#### GC (DotNet)
+
+increase(dotnet_collection_count_total[5m])
+
+#### CPU usage (DotNet)
+
+avg by (instance) (irate(process_cpu_seconds_total[5m]))
+
+#### Network (DotNet)
+
+rate(dotnet_sockets_bytes_sent_total[5m])
+
+rate(dotnet_sockets_bytes_received_total[5m])
+
+
+#### API Server 모니터링 (ASP.NET Core)
+
+rate(http_request_duration_seconds_count[5m])
+
+#### 소켓 Server 모니터링 (.Net Framework)
+
+현재 연결된 소켓 수
+
+dotnet_sockets_connections_established_incoming_total
+
+#### 받고/보내기 트래픽
+
+rate(dotnet_sockets_bytes_sent_total[5m])
+
+rate(dotnet_sockets_bytes_received_total[5m])
