@@ -3,6 +3,7 @@ using GameServer.Services.Interfaces;
 using GameServer.DTO;
 using ServerShared;
 using System.Text.Json;
+using Prometheus;
 
 namespace GameServer.Controllers;
 
@@ -13,6 +14,9 @@ public class LoginController : BaseController<LoginController> // ControllerBase
     private readonly ILogger<LoginController> _logger;
     private readonly ILoginService _loginService;
 
+    private static readonly Gauge RealLoginGauge = Metrics.CreateGauge("game_server_real_login", "Real login Metric");
+
+
     public LoginController(ILogger<LoginController> logger, ILoginService loginService) : base(logger)
     {
         _logger = logger;
@@ -22,6 +26,8 @@ public class LoginController : BaseController<LoginController> // ControllerBase
     [HttpPost]
     public async Task<GameLoginResponse> Login([FromBody] GameLoginRequest request)
     {
+        RealLoginGauge.Inc();
+
         try
         {
             var verifyTokenRequest = new VerifyTokenRequest

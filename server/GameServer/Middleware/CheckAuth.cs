@@ -29,6 +29,13 @@ public class CheckAuth
             return;
         }
 
+        // 
+        if (IsFakeLoginRequest(context))
+        {
+            await _next(context);
+            return;
+        }
+
         if (IsLoginOrRegisterRequest(context))
         {
             await _next(context);
@@ -124,6 +131,12 @@ public class CheckAuth
         var formString = context.Request.Path.Value;
         return string.Compare(formString, "/login", StringComparison.OrdinalIgnoreCase) == 0 ||
                string.Compare(formString, "/register", StringComparison.OrdinalIgnoreCase) == 0;
+    }
+
+    private bool IsFakeLoginRequest(HttpContext context)
+    {
+        var formString = context.Request.Path.Value;
+        return string.Compare(formString, "/fakelogin", StringComparison.OrdinalIgnoreCase) == 0;
     }
 
     private bool TryGetHeaders(HttpContext context, out string playerId, out string token)
