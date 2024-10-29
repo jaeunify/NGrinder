@@ -287,6 +287,16 @@ docker run -d --name prometheus \
 
 컨테이너 IP 주소 확인 : `docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' node_exporter`
 
+docker compose 에서 특정 서비스만 빌드할 때
+
+    ```bash
+    docker-compose build <SERVICE_NAME>  # 특정 서비스만 빌드할 때
+    docker-compose up -d --build  # 모든 서비스를 다시 빌드 및 실행
+    ```
+
+
+
+
 ### 7. Node exporter 사용하기
 
 exporter란, Prometheus가 모니터링할 수 있는 metric을 제공하는 엔드포인트(서버)를 생성하는 애플리케이션이다.
@@ -652,7 +662,39 @@ Grafana의 다양한 시각화 도구를 통해 데이터 분석과 모니터링
 
 <br>
 
-이제 아래 코드는 프로메테우스에서 node_exporter를 활용해서 수집한 metric을 promql을 통해 시각화 하는 실습 코드이다.
+["프로메테우스 & 그라파나 실습 문서"](./Metrics_Tutorial.md)는
 
-promql을 통해 Grafana에서 데이터를 시각해 볼 수 있다.
+프로메테우스가 node_exporter를 활용해서 수집한 metric을 promql을 통해 데이터 시각화(이때 그라파나 사용)하는 실습 문서이다.
+
+<br><br>
+
+# 실습 : 그라파나 대시보드 구성
+
+
+이제 나의 프로젝트의 그라파나 대시보드 구성에 대해 설명하겠다.
+
+[server 폴더](./server/) 하위에 위치하는 api 서버인 gameserver, 계정 생성 및 로그인을 담당하는 hiveserver, 매칭을 담당하는 matchserver 를 모니터링한다.
+
+
+
+json settings 은 [grafana_dashboard_settings.json](./grafana/dashboard_settings.json) 파일에 정의되어있다.
+
+
+
+### CPU 
+
+![](./img/my_grafana_cpu.png)
+
+
+### Memory
+
+![](./img/my_grafana_memory.png)
+
+### GC
+
+![](./img/my_grafana_gc.png)
+
+### API & Network
+
+![](./img/my_grafana_api.png)
 
