@@ -236,6 +236,39 @@ rate(http_requests_received_total{endpoint="Login"}[1m])
 - [] 값, 즉 간격이 너무 짧다면 metric을 수집할 수 없다.
 
 
+### ASP.NET core 내 Gauge Metric 활용해서 특정 API 모니터링하기
+
+ASP.net core에서 Prometheus를 사용하여 특정 API의 요청 수를 모니터링하는 방법이다. 
+nuget에서 패키지 설치 이후 `using Prometheus;` 을 통해 사용할 수 있다.
+
+아래는 FakeLoginController 내에서 Gauge Metric을 생성하고, FakeLogin API 요청이 들어올 때마다 증가시키는 예시이다.
+
+```csharp
+
+    private static readonly Gauge FakeLoginGauge = Metrics.CreateGauge("game_server_fake_login", "Fake login Metric");
+
+    ...
+
+    [HttpPost]
+    public async Task<GameLoginResponse> FakeLogin([FromBody] GameLoginRequest request)
+    {
+        FakeLoginGauge.Inc();
+		...
+    }
+```
+
+위와 같이 코드를 구성하면 FakeLogin API 요청이 들어올 때마다 FakeLoginGauge가 증가하게 된다.
+
+해당 Endpoint의 metrics를 조회해보면 아래와 같이 쌓인 것을 확인할 수 있다.
+
+
+Grafana에서도 해당 gauge Metric을 조회할 수 있다.
+
+```promql
+game_server_fake_login
+sum(game_server_fake_login)
+```
+
 
 
 ## C#에서의 GC 정보
@@ -355,6 +388,7 @@ rate(dotnet_collection_count_total[1m])
 
 sum by (mode) (rate(windows_cpu_time_total[5m]))
 
+
 #### Memory Usage
 
 windows_cs_physical_memory_bytes - windows_os_physical_memory_free_bytes
@@ -374,6 +408,8 @@ increase(dotnet_collection_count_total[5m])
 #### CPU usage (DotNet)
 
 avg by (instance) (irate(process_cpu_seconds_total[5m]))
+
+5분 동안 각 인스턴스의 초당 CPU 사용 시간을 측정하여, 인스턴스별 평균 CPU 사용률을 계산
 
 #### Network (DotNet)
 
