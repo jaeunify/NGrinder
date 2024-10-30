@@ -378,7 +378,7 @@ Prometheus : 이 Node Exporter로부터 데이터를 수집하여 시스템 상�
 
 1. **Node Exporter**: 서버의 리소스 상태를 수집하고 `/metrics` 엔드포인트로 노출
 2. **Prometheus**: `prometheus.yml` 설정에 따라 Node Exporter의 엔드포인트(예: `nodeexporter:9100`)로부터 데이터를 주기적으로 스크레이핑하여 저장
-3. **Grafana**: Prometheus가 수집한 데이터를 시각화하는 툴입니다. 
+3. **Grafana**: Prometheus가 수집한 데이터를 시각화하는 툴이다. 
     - Grafana는 Node Exporter에 직접 연결되는 것이 아니라, **Prometheus 데이터 소스**를 설정하여 해당 데이터를 시각화
 
 
@@ -488,53 +488,64 @@ receivers:
 
 **global** 섹션:
 
-- `resolve_timeout`: 알람이 해결된 후 Alertmanager가 경고를 해제하기 전에 대기하는 시간입니다. 
-- 여기서는 5분으로 설정되었습니다. 즉, 5분 후에 경고가 해결되면 알림을 중지합니다.
+- `resolve_timeout`: 알람이 해결된 후 Alertmanager가 경고를 해제하기 전에 대기하는 시간 
+- 여기서는 5분으로 설정되었습니다. 즉, 5분 후에 경고가 해결되면 알림을 중지
 
 **route** 섹션:
-- `receiver`: 기본적으로 경고를 전달할 수신자(경고가 발생했을 때 알림을 보낼 대상)를 지정합니다. 
-- 여기서는 `email-notifications`라는 이름을 가진 수신자에게 알람이 전송되도록 설정했습니다.
+- `receiver`: 기본적으로 경고를 전달할 수신자(경고가 발생했을 때 알림을 보낼 대상)를 지정
+- 여기서는 `email-notifications`라는 이름을 가진 수신자에게 알람이 전송되도록 설정
 
 **receivers** 섹션:
-- **receivers**는 경고를 처리하는 방법을 정의하는 부분입니다. 각 수신자는 경고를 받을 수신자 그룹을 정의합니다.
-- `name`: 수신자의 이름입니다. 여기서는 `email-notifications`라는 이름으로 정의되었습니다.
-- `email_configs`: 이메일을 통해 알람을 보내는 설정을 정의합니다.
+- **receivers**는 경고를 처리하는 방법을 정의하는 부분. 각 수신자는 경고를 받을 수신자 그룹 정의
+- `name`: 수신자의 이름 (여기서는 `email-notifications`라고 정의)
+- `email_configs`: 이메일을 통해 알람을 보내는 설정을 정의
 
-  - `to`: 알람을 받을 이메일 주소입니다. 예를 들어, `your-email@example.com`에 알람이 전송됩니다.
-  - `from`: 발신 이메일 주소입니다. 이 주소는 Alertmanager에서 발송하는 이메일의 발신자로 표시됩니다.
-  - `smarthost`: SMTP 서버의 주소와 포트를 입력합니다. 예를 들어, `smtp.example.com:587`은 SMTP 서버가 `smtp.example.com`이며 포트 587을 사용한다는 의미입니다. 이는 이메일을 전송하기 위해 필요한 서버 정보입니다.
-  - `auth_username`: SMTP 서버에 로그인하기 위한 사용자명입니다. 이메일 발송에 사용할 계정의 사용자명을 입력합니다.
-  - `auth_password`: SMTP 서버에 로그인하기 위한 비밀번호입니다. 이메일 발송에 사용할 계정의 비밀번호를 입력합니다.
-  - `require_tls`: 이메일 전송 시 TLS 암호화 사용 여부를 설정합니다. `true`로 설정하면 암호화된 연결을 통해 이메일이 전송됩니다.
+  - `to`: 알람을 받을 이메일 주소입니다. 예를 들어, `your-email@example.com`에 알람이 전송
+  - `from`: 발신 이메일 주소입니다. 이 주소는 Alertmanager에서 발송하는 이메일의 발신자로 표시
+  - `smarthost`: SMTP 서버의 주소와 포트를 입력. 
+     + 예를 들어, `smtp.example.com:587`은 SMTP 서버가 `smtp.example.com`이며 포트 587을 사용한다는 의미
+     + 이는 이메일을 전송하기 위해 필요한 서버 정보
+  - `auth_username`: SMTP 서버에 로그인하기 위한 사용자명. 이메일 발송에 사용할 계정의 사용자명을 입력
+  - `auth_password`: SMTP 서버에 로그인하기 위한 비밀번호. 이메일 발송에 사용할 계정의 비밀번호를 입력
+  - `require_tls`: 이메일 전송 시 TLS 암호화 사용 여부 설정. `true`로 설정하면 암호화된 연결을 통해 이메일 전송
+
+<details>
+<summary>SMTP 서버 정보란?</summary>
 
 **SMTP 서버 정보란 무엇인가?**
 
-**SMTP**(Simple Mail Transfer Protocol)는 이메일을 보내기 위한 프로토콜입니다. 
+**SMTP**(Simple Mail Transfer Protocol)는 이메일을 보내기 위한 프로토콜 
 
-이메일을 전송하려면 SMTP 서버를 통해 이메일이 전달됩니다. 
+이메일을 전송하려면 SMTP 서버를 통해 이메일 전달
 
-Alertmanager가 알람을 이메일로 보내기 위해서는 SMTP 서버의 정보를 제공해야 합니다.
+Alertmanager가 알람을 이메일로 보내기 위해서는 SMTP 서버의 정보를 제공해야 함
 
 SMTP 서버 정보를 설정하는 방법:
 
-- **smarthost**: SMTP 서버의 주소와 포트입니다. 대표적인 SMTP 서버의 정보는 아래와 같습니다:
+- **smarthost**: SMTP 서버의 주소와 포트. 대표적인 SMTP 서버의 정보:
   - **Gmail**:
     - 서버 주소: `smtp.gmail.com`
     - 포트: `587`
   - **네이버 메일**:
     - 서버 주소: `smtp.naver.com`
     - 포트: `587`
-  - **다른 메일 서비스**는 해당 메일 서비스 제공자의 SMTP 서버 정보를 참조해야 합니다.
+  - **다른 메일 서비스**는 해당 메일 서비스 제공자의 SMTP 서버 정보를 참조해야 함.
   
-- **auth_username**: 이메일을 보내기 위해 로그인할 SMTP 서버 계정입니다. 이메일 전송을 허용하는 메일 계정의 사용자명을 입력합니다.
+- **auth_username**: 이메일을 보내기 위해 로그인할 SMTP 서버 계정. 이메일 전송을 허용하는 메일 계정의 사용자명 입력.
   - 예: Gmail 계정의 이메일 주소(`your-email@gmail.com`).
 
-- **auth_password**: SMTP 서버 로그인 비밀번호입니다. 이 값은 이메일 발송을 허가받기 위해 계정의 비밀번호입니다.
-  - 예: Gmail 계정의 비밀번호. Gmail을 사용하는 경우, 2단계 인증을 사용한다면 **앱 비밀번호**를 생성해서 사용해야 합니다.
+- **auth_password**: SMTP 서버 로그인 비밀번호 (이메일 발송을 허가받기 위한)
+  - 예: Gmail 계정의 비밀번호. Gmail을 사용하는 경우, 2단계 인증을 사용한다면 앱 비밀번호를 생성해서 사용해야 한다.
+
+</details>
+
+
+<details>
+<summary>Gmail을 사용한 SMTP 설정</summary>
 
 ##### Gmail을 사용한 SMTP 설정 예시:
 
-Gmail SMTP 서버를 사용하여 Alertmanager에서 이메일 알림을 설정하는 방법을 설명드리겠습니다.
+Gmail SMTP 서버를 사용하여 Alertmanager에서 이메일 알림을 설정하는 방법에 대한 간단한 설명이다.
 
 ```yaml
 global:
@@ -555,15 +566,15 @@ receivers:
 ```
 
 > ⚠️ **Gmail을 사용할 때 주의할 점**:
-> 1. Gmail은 보안 상의 이유로 기본 비밀번호로는 외부 애플리케이션에서 SMTP를 사용할 수 없습니다. **앱 비밀번호**라는 별도의 비밀번호를 생성해야 합니다.
+> 1. Gmail은 보안 상의 이유로 기본 비밀번호로는 외부 애플리케이션에서 SMTP를 사용할 수 없다. **앱 비밀번호**라는 별도의 비밀번호를 생성해야 한다.
 > 2. 앱 비밀번호를 생성하려면:
->    - Google 계정 설정에서 **2단계 인증**을 활성화해야 합니다.
->    - 그런 다음 **앱 비밀번호**를 생성하여 SMTP 인증에 사용할 수 있습니다.
+>    - Google 계정 설정에서 **2단계 인증**을 활성화한다.
+>    - 그런 다음 **앱 비밀번호**를 생성하여 SMTP 인증에 사용할 수 있다.
 >    - [앱 비밀번호 생성 방법](https://support.google.com/accounts/answer/185833?hl=ko)
 
 
 
-설정 파일을 작성한 후, Alertmanager 컨테이너를 시작하거나 재시작할 때 이 파일을 마운트하여 사용합니다.
+설정 파일을 작성한 후, Alertmanager 컨테이너를 시작하거나 재시작할 때 이 파일을 마운트하여 사용한다.
 
 ```bash
 docker run -d --name alertmanager \
@@ -572,22 +583,23 @@ docker run -d --name alertmanager \
   prom/alertmanager
 ```
 
-이렇게 하면 Alertmanager는 설정 파일에 정의된 수신자(여기서는 이메일)를 통해 알림을 전송할 수 있습니다.
+이렇게 하면 Alertmanager는 설정 파일에 정의된 수신자(여기서는 이메일)를 통해 알림을 전송할 수 있다.
 
 
-- **Alertmanager 설정 파일**은 YAML 형식으로 작성하며, 경고가 발생할 때 알림을 전송할 수신자 및 메일 서버 정보를 포함합니다.
-- **SMTP 서버**는 이메일을 발송하기 위한 서버 정보이며, 이를 통해 Alertmanager가 이메일을 발송할 수 있습니다.
-- 설정 파일을 **마운트**한 상태로 Alertmanager Docker 컨테이너를 실행하면 이메일을 통한 경고 알림을 받을 수 있습니다.
+- **Alertmanager 설정 파일**은 YAML 형식으로 작성하며, 경고가 발생할 때 알림을 전송할 수신자 및 메일 서버 정보를 포함한다.
+- **SMTP 서버**는 이메일을 발송하기 위한 서버 정보이며, 이를 통해 Alertmanager가 이메일을 발송할 수 있다.
+- 설정 파일을 **마운트**한 상태로 Alertmanager Docker 컨테이너를 실행하면 이메일을 통한 경고 알림을 받을 수 있다.
 
 
 - 추후 프로메테우스의 설정파일에 Alertmanager의 주소를 추가하여, 알람을 받을 수 있도록 설정하면 된다.
 
-
+</details>
 
 
 <br>
 <br>
-<br>
+
+---
 
 ## Prometheus Web UI 대신 Grafana 사용하기
 
@@ -639,7 +651,7 @@ Grafana는 기본적으로 `http://localhost:3000`에서 접근할 수 있으며
 
 #### d. Grafana 실습 예제: CPU 사용률 모니터링
  
-1. 새 대시보드를 생성하고, 패널을 추가합니다.
+1. 새 대시보드를 생성하고, 패널을 추가한다.
 2. PromQL 쿼리로 CPU 사용률을 계산하기 위해 쿼리를 입력: (Builder 탭에서 Code 탭으로 변경하여 입력)
     ```sql
     100 - (avg by (cpu) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)
@@ -654,6 +666,7 @@ Grafana는 기본적으로 `http://localhost:3000`에서 접근할 수 있으며
 
 Grafana의 다양한 시각화 도구를 통해 데이터 분석과 모니터링을 효과적으로 수행할 수 있다.
 
+추가적으로 **Add**에서 **row**를 추가하여 패널을 그룹화하여 관리할 수 있다.
 
 <br>
 
