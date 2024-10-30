@@ -1,4 +1,4 @@
-{
+ï»¿{
     "annotations": {
         "list": [
             {
@@ -15,13 +15,26 @@
             }
         ]
     },
-    "description": "¿À¸ñ api server ¸ğ´ÏÅÍ¸µ (Game, Hive, Match)",
+    "description": "ì˜¤ëª© api server ëª¨ë‹ˆí„°ë§ (Game, Hive, Match)",
     "editable": true,
     "fiscalYearStartMonth": 0,
     "graphTooltip": 0,
     "id": 4,
     "links": [],
     "panels": [
+        {
+            "collapsed": false,
+            "gridPos": {
+                "h": 1,
+                "w": 24,
+                "x": 0,
+                "y": 0
+            },
+            "id": 13,
+            "panels": [],
+            "title": "CPU",
+            "type": "row"
+        },
         {
             "datasource": {
                 "type": "prometheus",
@@ -37,7 +50,8 @@
                         "mode": "absolute",
                         "steps": [
                             {
-                                "color": "green"
+                                "color": "green",
+                                "value": null
                             },
                             {
                                 "color": "red",
@@ -52,7 +66,7 @@
                 "h": 11,
                 "w": 7,
                 "x": 0,
-                "y": 0
+                "y": 1
             },
             "id": 12,
             "options": {
@@ -80,7 +94,7 @@
                     "refId": "A"
                 }
             ],
-            "title": "CPU »ç¿ë·®(%)",
+            "title": "CPU ì‚¬ìš©ëŸ‰(%)",
             "type": "gauge"
         },
         {
@@ -88,7 +102,7 @@
                 "type": "prometheus",
                 "uid": "ae26y76ga8740a"
             },
-            "description": "´©Àû CPU  »ç¿ë·ü (4K=400ÃÊ)",
+            "description": "ëˆ„ì  CPU  ì‚¬ìš©ë¥  (4K=400ì´ˆ)",
             "fieldConfig": {
                 "defaults": {
                     "color": {
@@ -132,7 +146,8 @@
                         "mode": "absolute",
                         "steps": [
                             {
-                                "color": "green"
+                                "color": "green",
+                                "value": null
                             },
                             {
                                 "color": "red",
@@ -147,7 +162,7 @@
                 "h": 11,
                 "w": 10,
                 "x": 7,
-                "y": 0
+                "y": 1
             },
             "id": 3,
             "options": {
@@ -172,7 +187,7 @@
                     "refId": "A"
                 }
             ],
-            "title": "´©Àû CPU »ç¿ë·ü",
+            "title": "ëˆ„ì  CPU ì‚¬ìš©ë¥ ",
             "type": "timeseries"
         },
         {
@@ -180,7 +195,7 @@
                 "type": "prometheus",
                 "uid": "ae26y76ga8740a"
             },
-            "description": "5ºĞ µ¿¾È °¢ ÀÎ½ºÅÏ½ºÀÇ ÃÊ´ç CPU »ç¿ë ½Ã°£À» ÃøÁ¤ÇÏ¿©, ÀÎ½ºÅÏ½ºº° Æò±Õ CPU »ç¿ë·üÀ» °è»ê",
+            "description": "5ë¶„ ë™ì•ˆ ê° ì¸ìŠ¤í„´ìŠ¤ì˜ ì´ˆë‹¹ CPU ì‚¬ìš© ì‹œê°„ì„ ì¸¡ì •í•˜ì—¬, ì¸ìŠ¤í„´ìŠ¤ë³„ í‰ê·  CPU ì‚¬ìš©ë¥ ì„ ê³„ì‚°",
             "fieldConfig": {
                 "defaults": {
                     "color": {
@@ -224,7 +239,8 @@
                         "mode": "absolute",
                         "steps": [
                             {
-                                "color": "green"
+                                "color": "green",
+                                "value": null
                             },
                             {
                                 "color": "red",
@@ -239,7 +255,7 @@
                 "h": 13,
                 "w": 9,
                 "x": 0,
-                "y": 11
+                "y": 12
             },
             "id": 10,
             "options": {
@@ -264,7 +280,7 @@
                     "refId": "A"
                 }
             ],
-            "title": "ÀÎ½ºÅÏ½º º° Æò±Õ CPU »ç¿ë",
+            "title": "ì¸ìŠ¤í„´ìŠ¤ ë³„ í‰ê·  CPU ì‚¬ìš©",
             "type": "timeseries"
         },
         {
@@ -272,7 +288,7 @@
                 "type": "prometheus",
                 "uid": "ae26y76ga8740a"
             },
-            "description": "Æò±Õ cpu »ç¿ë·ü (1½Ã°£)\n20°³ÀÇ ½º·¹µå",
+            "description": "í‰ê·  cpu ì‚¬ìš©ë¥  (1ì‹œê°„)\n20ê°œì˜ ìŠ¤ë ˆë“œ",
             "fieldConfig": {
                 "defaults": {
                     "color": {
@@ -319,7 +335,8 @@
                         "mode": "absolute",
                         "steps": [
                             {
-                                "color": "green"
+                                "color": "green",
+                                "value": null
                             },
                             {
                                 "color": "red",
@@ -334,7 +351,7 @@
                 "h": 13,
                 "w": 8,
                 "x": 9,
-                "y": 11
+                "y": 12
             },
             "id": 1,
             "options": {
@@ -363,15 +380,28 @@
                     "refId": "A"
                 }
             ],
-            "title": "Æò±Õ CPU »ç¿ë·ü",
+            "title": "í‰ê·  CPU ì‚¬ìš©ë¥ ",
             "type": "timeseries"
+        },
+        {
+            "collapsed": false,
+            "gridPos": {
+                "h": 1,
+                "w": 24,
+                "x": 0,
+                "y": 25
+            },
+            "id": 14,
+            "panels": [],
+            "title": "Memory",
+            "type": "row"
         },
         {
             "datasource": {
                 "type": "prometheus",
                 "uid": "ae26y76ga8740a"
             },
-            "description": "ÀüÃ¼ ¸Ş¸ğ¸® Áß »ç¿ë °¡´ÉÇÑ ¸Ş¸ğ¸®¸¦ Á¦¿ÜÇÑ ºÎºĞ(Áï, »ç¿ë ÁßÀÎ ¸Ş¸ğ¸®)À» ÆÛ¼¾Æ®·Î ³ªÅ¸³¿",
+            "description": "ì „ì²´ ë©”ëª¨ë¦¬ ì¤‘ ì‚¬ìš© ê°€ëŠ¥í•œ ë©”ëª¨ë¦¬ë¥¼ ì œì™¸í•œ ë¶€ë¶„(ì¦‰, ì‚¬ìš© ì¤‘ì¸ ë©”ëª¨ë¦¬)ì„ í¼ì„¼íŠ¸ë¡œ ë‚˜íƒ€ëƒ„",
             "fieldConfig": {
                 "defaults": {
                     "color": {
@@ -382,7 +412,8 @@
                         "mode": "absolute",
                         "steps": [
                             {
-                                "color": "green"
+                                "color": "green",
+                                "value": null
                             },
                             {
                                 "color": "red",
@@ -397,7 +428,7 @@
                 "h": 12,
                 "w": 7,
                 "x": 0,
-                "y": 24
+                "y": 26
             },
             "id": 11,
             "options": {
@@ -425,7 +456,7 @@
                     "refId": "A"
                 }
             ],
-            "title": "Memory »ç¿ë·®(%)",
+            "title": "Memory ì‚¬ìš©ëŸ‰(%)",
             "type": "gauge"
         },
         {
@@ -433,7 +464,7 @@
                 "type": "prometheus",
                 "uid": "ae26y76ga8740a"
             },
-            "description": "»ç¿ë °¡´ÉÇÑ ¸Ş¸ğ¸® È®ÀÎ",
+            "description": "ì‚¬ìš© ê°€ëŠ¥í•œ ë©”ëª¨ë¦¬ í™•ì¸",
             "fieldConfig": {
                 "defaults": {
                     "color": {
@@ -444,7 +475,8 @@
                         "mode": "absolute",
                         "steps": [
                             {
-                                "color": "green"
+                                "color": "green",
+                                "value": null
                             },
                             {
                                 "color": "red",
@@ -459,7 +491,7 @@
                 "h": 12,
                 "w": 7,
                 "x": 7,
-                "y": 24
+                "y": 26
             },
             "id": 2,
             "options": {
@@ -489,15 +521,28 @@
                     "refId": "A"
                 }
             ],
-            "title": "»ç¿ë °¡´ÉÇÑ ¸Ş¸ğ¸® (%)",
+            "title": "ì‚¬ìš© ê°€ëŠ¥í•œ ë©”ëª¨ë¦¬ (%)",
             "type": "stat"
+        },
+        {
+            "collapsed": false,
+            "gridPos": {
+                "h": 1,
+                "w": 24,
+                "x": 0,
+                "y": 38
+            },
+            "id": 15,
+            "panels": [],
+            "title": "GC",
+            "type": "row"
         },
         {
             "datasource": {
                 "type": "prometheus",
                 "uid": "ae26y76ga8740a"
             },
-            "description": "1ºĞ µ¿¾ÈÀÇ GC ¼öÁı Áõ°¡·®À» ±âÁØÀ¸·Î ÃÊ´ç Æò±Õ GC ¼öÁı È½¼ö¸¦ º¸¿©ÁÜ",
+            "description": "1ë¶„ ë™ì•ˆì˜ GC ìˆ˜ì§‘ ì¦ê°€ëŸ‰ì„ ê¸°ì¤€ìœ¼ë¡œ ì´ˆë‹¹ í‰ê·  GC ìˆ˜ì§‘ íšŸìˆ˜ë¥¼ ë³´ì—¬ì¤Œ",
             "fieldConfig": {
                 "defaults": {
                     "color": {
@@ -541,7 +586,8 @@
                         "mode": "absolute",
                         "steps": [
                             {
-                                "color": "green"
+                                "color": "green",
+                                "value": null
                             },
                             {
                                 "color": "red",
@@ -662,7 +708,7 @@
                 "h": 11,
                 "w": 9,
                 "x": 0,
-                "y": 36
+                "y": 39
             },
             "id": 9,
             "options": {
@@ -687,7 +733,7 @@
                     "refId": "A"
                 }
             ],
-            "title": "1ÃÊ´ç ¼¼´ë º° GC Æò±Õ ¼öÇà È½¼ö",
+            "title": "1ì´ˆë‹¹ ì„¸ëŒ€ ë³„ GC í‰ê·  ìˆ˜í–‰ íšŸìˆ˜",
             "type": "timeseries"
         },
         {
@@ -695,7 +741,7 @@
                 "type": "prometheus",
                 "uid": "ae26y76ga8740a"
             },
-            "description": "¾ÖÇÃ¸®ÄÉÀÌ¼Ç º° Garbage Collection ÃÑ ¼öÇà È½¼ö (¼¼´ëº°)",
+            "description": "ì• í”Œë¦¬ì¼€ì´ì…˜ ë³„ Garbage Collection ì´ ìˆ˜í–‰ íšŸìˆ˜ (ì„¸ëŒ€ë³„)",
             "fieldConfig": {
                 "defaults": {
                     "color": {
@@ -739,7 +785,8 @@
                         "mode": "absolute",
                         "steps": [
                             {
-                                "color": "green"
+                                "color": "green",
+                                "value": null
                             },
                             {
                                 "color": "red",
@@ -890,7 +937,7 @@
                 "h": 11,
                 "w": 8,
                 "x": 9,
-                "y": 36
+                "y": 39
             },
             "id": 8,
             "options": {
@@ -939,15 +986,28 @@
                     "refId": "C"
                 }
             ],
-            "title": "GC ¼öÇà È½¼ö",
+            "title": "GC ìˆ˜í–‰ íšŸìˆ˜",
             "type": "timeseries"
+        },
+        {
+            "collapsed": false,
+            "gridPos": {
+                "h": 1,
+                "w": 24,
+                "x": 0,
+                "y": 50
+            },
+            "id": 16,
+            "panels": [],
+            "title": "HTTP & Network",
+            "type": "row"
         },
         {
             "datasource": {
                 "type": "prometheus",
                 "uid": "ae26y76ga8740a"
             },
-            "description": "1ºĞ°£ 1ÃÊ¸¶´Ù µé¾î¿Â HTTP ¿äÃ» Æò±Õ °³¼ö",
+            "description": "1ë¶„ê°„ 1ì´ˆë§ˆë‹¤ ë“¤ì–´ì˜¨ HTTP ìš”ì²­ í‰ê·  ê°œìˆ˜",
             "fieldConfig": {
                 "defaults": {
                     "color": {
@@ -991,7 +1051,8 @@
                         "mode": "absolute",
                         "steps": [
                             {
-                                "color": "green"
+                                "color": "green",
+                                "value": null
                             },
                             {
                                 "color": "red",
@@ -1006,7 +1067,7 @@
                 "h": 11,
                 "w": 9,
                 "x": 0,
-                "y": 47
+                "y": 51
             },
             "id": 5,
             "options": {
@@ -1031,7 +1092,7 @@
                     "refId": "A"
                 }
             ],
-            "title": "HTTP ¿äÃ» Æò±Õ °³¼ö",
+            "title": "HTTP ìš”ì²­ í‰ê·  ê°œìˆ˜",
             "type": "timeseries"
         },
         {
@@ -1039,7 +1100,7 @@
                 "type": "prometheus",
                 "uid": "ae26y76ga8740a"
             },
-            "description": "ÃÖ±Ù 5ºĞ°£ ¿£µåÆ÷ÀÎÆ® º° HTTP ¿äÃ» Æò±Õ Ã³¸® ½Ã°£(ÃÊ)",
+            "description": "ìµœê·¼ 5ë¶„ê°„ ì—”ë“œí¬ì¸íŠ¸ ë³„ HTTP ìš”ì²­ í‰ê·  ì²˜ë¦¬ ì‹œê°„(ì´ˆ)",
             "fieldConfig": {
                 "defaults": {
                     "color": {
@@ -1083,7 +1144,8 @@
                         "mode": "absolute",
                         "steps": [
                             {
-                                "color": "green"
+                                "color": "green",
+                                "value": null
                             },
                             {
                                 "color": "red",
@@ -1098,7 +1160,7 @@
                 "h": 11,
                 "w": 8,
                 "x": 9,
-                "y": 47
+                "y": 51
             },
             "id": 6,
             "options": {
@@ -1123,7 +1185,7 @@
                     "refId": "A"
                 }
             ],
-            "title": "HTTP ¿äÃ» Æò±Õ Ã³¸® ½Ã°£(ÃÊ)",
+            "title": "HTTP ìš”ì²­ í‰ê·  ì²˜ë¦¬ ì‹œê°„(ì´ˆ)",
             "type": "timeseries"
         },
         {
@@ -1131,7 +1193,7 @@
                 "type": "prometheus",
                 "uid": "ae26y76ga8740a"
             },
-            "description": "Login API ´©Àû ¿äÃ» ¼ö, API ÃÊ´ç ¿äÃ» ¼ö (game & hive)",
+            "description": "Login API ëˆ„ì  ìš”ì²­ ìˆ˜, API ì´ˆë‹¹ ìš”ì²­ ìˆ˜ (game & hive)",
             "fieldConfig": {
                 "defaults": {
                     "color": {
@@ -1175,7 +1237,8 @@
                         "mode": "absolute",
                         "steps": [
                             {
-                                "color": "green"
+                                "color": "green",
+                                "value": null
                             },
                             {
                                 "color": "red",
@@ -1192,7 +1255,7 @@
                             "options": {
                                 "mode": "exclude",
                                 "names": [
-                                    "´©Àû ¿äÃ» ¼ö"
+                                    "ëˆ„ì  ìš”ì²­ ìˆ˜"
                                 ],
                                 "prefix": "All except:",
                                 "readOnly": true
@@ -1215,7 +1278,7 @@
                 "h": 12,
                 "w": 9,
                 "x": 0,
-                "y": 58
+                "y": 62
             },
             "id": 7,
             "options": {
@@ -1239,7 +1302,7 @@
                     "format": "time_series",
                     "instant": false,
                     "interval": "",
-                    "legendFormat": "´©Àû ¿äÃ» ¼ö",
+                    "legendFormat": "ëˆ„ì  ìš”ì²­ ìˆ˜",
                     "range": true,
                     "refId": "A"
                 },
@@ -1253,12 +1316,12 @@
                     "format": "time_series",
                     "hide": false,
                     "instant": false,
-                    "legendFormat": "ÃÊ´ç ¿äÃ» ¼ö",
+                    "legendFormat": "ì´ˆë‹¹ ìš”ì²­ ìˆ˜",
                     "range": true,
                     "refId": "B"
                 }
             ],
-            "title": "Login ¿äÃ» ¼ö",
+            "title": "Login ìš”ì²­ ìˆ˜",
             "type": "timeseries"
         },
         {
@@ -1266,7 +1329,7 @@
                 "type": "prometheus",
                 "uid": "ae26y76ga8740a"
             },
-            "description": "³×Æ®¿öÅ© Àü¼Û/¼ö½Å ¼Óµµ",
+            "description": "ë„¤íŠ¸ì›Œí¬ ì „ì†¡/ìˆ˜ì‹  ì†ë„",
             "fieldConfig": {
                 "defaults": {
                     "color": {
@@ -1310,7 +1373,8 @@
                         "mode": "absolute",
                         "steps": [
                             {
-                                "color": "green"
+                                "color": "green",
+                                "value": null
                             },
                             {
                                 "color": "red",
@@ -1350,7 +1414,7 @@
                 "h": 12,
                 "w": 8,
                 "x": 9,
-                "y": 58
+                "y": 62
             },
             "id": 4,
             "options": {
@@ -1391,7 +1455,7 @@
                     "refId": "B"
                 }
             ],
-            "title": "³×Æ®¿öÅ© »ç¿ë·ü",
+            "title": "ë„¤íŠ¸ì›Œí¬ ì‚¬ìš©ë¥ ",
             "type": "timeseries"
         }
     ],
@@ -1409,6 +1473,6 @@
     "timezone": "browser",
     "title": "Omok API Game Server",
     "uid": "ee2arfc6dcvlsa",
-    "version": 27,
+    "version": 31,
     "weekStart": ""
 }
