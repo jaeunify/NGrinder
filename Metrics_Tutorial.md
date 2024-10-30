@@ -10,12 +10,12 @@
 - [네트워크 사용률](#네트워크-사용률)
 - [CPU 이용률](#CPU-이용률)
 
-### [API 서버의 초당 요청 수 표시](#API-서버의-초당-요청-수-표시)
+### [API 서버의 초당 요청 수 표시](#api-서버의-초당-요청-수-표시-1)
 - [최근 1분간 1초마다 들어온 HTTP 요청의 평균 개수](#최근-1분간-1초마다-들어온-HTTP-요청의-평균-개수)
 - [최근 5분간 엔드포인트 별 HTTP 요청 평균 처리 시간(초)](#최근-5분간-엔드포인트-별-HTTP-요청-평균-처리-시간(초))
 - [특정 API 누적 요청 수](#특정-API-누적-요청-수)
 - [특정 API 초당 요청 수](#특정-API-초당-요청-수)
-- [ASP.NET core 서버 내 Gauge metric을 통해 특정 API 모니터링하기](#ASP.NET-core-내-Gauge-Metric-활용해서-특정-API-모니터링하기)
+- [ASP.NET core 서버 내 Gauge metric을 통해 특정 API 모니터링하기](#aspnet-core-내-gauge-metric-활용해서-특정-api-모니터링하기)
 
 
 
@@ -25,9 +25,9 @@
 - [세대별 GC 평균 수집 횟수](#세대별-GC-평균-수집-횟수)
 
 
-### [Prometheus 총정리 with C# asp.net core](#Prometheus-총정리-with-C#-asp.net-core)
-- [Prometheus Metrics type](#Prometheus-Metrics-type)
-- [ASP.NET Core에서 Prometheus 사용하기](#ASP.NET-Core에서-Prometheus-사용하기)
+### [Prometheus 총정리 with C# asp.net core](#prometheus-총정리-with-c-aspnet-core-1)
+- [Prometheus Metrics type](#prometheus-metrics-type)
+- [ASP.NET Core에서 Prometheus 사용하기](#aspnet-core에서-prometheus-사용하기)
 
  
 ---
