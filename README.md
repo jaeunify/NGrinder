@@ -674,7 +674,7 @@ Grafana의 다양한 시각화 도구를 통해 데이터 분석과 모니터링
 
 <br>
 
-["프로메테우스 & 그라파나 실습 문서"](./Metrics_Tutorial.md)는
+["프로메테우스 & 그라파나 실습 문서"](./Tutorial.md)는
 
 프로메테우스가 node_exporter를 활용해서 수집한 metric을 promql을 통해 데이터 시각화(이때 그라파나 사용)하는 실습 문서이다.
 

@@ -1,4 +1,4 @@
-# Prometheus & Grafana 모니터링 실습
+# Prometheus & Grafana 모니터링 실습 튜토리얼
 
 ## 목차
 
@@ -10,13 +10,13 @@
 - [네트워크 사용률](#네트워크-사용률)
 - [CPU 이용률](#CPU-이용률)
 
+- 
 ### [API 서버의 초당 요청 수 표시](#api-서버의-초당-요청-수-표시-1)
 - [최근 1분간 1초마다 들어온 HTTP 요청의 평균 개수](#최근-1분간-1초마다-들어온-HTTP-요청의-평균-개수)
 - [최근 5분간 엔드포인트 별 HTTP 요청 평균 처리 시간(초)](#최근-5분간-엔드포인트-별-HTTP-요청-평균-처리-시간(초))
 - [특정 API 누적 요청 수](#특정-API-누적-요청-수)
 - [특정 API 초당 요청 수](#특정-API-초당-요청-수)
 - [ASP.NET core 서버 내 Gauge metric을 통해 특정 API 모니터링하기](#aspnet-core-내-gauge-metric-활용해서-특정-api-모니터링하기)
-
 
 
 ### [C#에서의 GC 정보](#GC-정보)
@@ -188,6 +188,25 @@ Prometheus의 웹 UI에서 네트워크 장치 이름을 조회 후 promql 문을 작성하자
 
 
 
+## 참고
+
+프로메테우스에는 target 데이터를 수집하는 주기인 scrap time이 존재한다.
+
+default 값은 1minute이며, `prometheus.yml` 파일에서 scrap_interval 를 수정하면 되는데, 
+
+너무 짧게 (ex. 1ms) 설정하면 문제가 발생할 수 있다.
+
+<br><br>
+
+---
+
+## API 서버의 초당 요청 수 표시
+
+이어서 API 서버의 초당 요청 수를 표시하는 더 자세한 사용 사례이다.
+
+endpoint 이름에 따라 조회하는 예시부터, Gauge를 사용하는 등의 내용을 다루고 있다.
+
+
 ### 최근 1분간 1초마다 들어온 HTTP 요청의 평균 개수
 
 ```promql
@@ -209,22 +228,6 @@ avg by (endpoint) (rate(http_request_duration_seconds_sum[5m]) / rate(http_reque
 - `rate(http_request_duration_seconds_sum[5m])` : 최근 5분 간 1초마다 HTTP 요청을 처리하는 데 소모한 시간
 - `(rate(http_request_duration_seconds_sum[5m]) / rate(http_request_duration_seconds_count[5m]))` : 최근 5분 간 HTTP 요청당 평균 처리 시간
 
-
-## 참고
-
-프로메테우스에는 target 데이터를 수집하는 주기인 scrap time이 존재한다.
-
-default 값은 1minute이며, `prometheus.yml` 파일에서 scrap_interval 를 수정하면 되는데, 
-
-너무 짧게 (ex. 1ms) 설정하면 문제가 발생할 수 있다.
-
----
-
-## API 서버의 초당 요청 수 표시
-
-이어서 API 서버의 초당 요청 수를 표시하는 더 자세한 사용 사례이다.
-
-endpoint 이름에 따라 조회하는 예시부터, Gauge를 사용하는 등의 내용을 다루고 있다.
 
 ### 특정 API 누적 요청 수
 
@@ -281,6 +284,10 @@ sum(game_server_fake_login)
 ```
 
 
+<br><br>
+
+---
+
 
 ## GC 정보
 
@@ -310,8 +317,13 @@ rate(dotnet_collection_count_total[1m])
 - rate(dotnet_collection_count_total[1m]) : rate 함수를 통해 1분 간의 평균 수집 횟수 확인 가능
 
 
+<br><br>
+
 ---
+
 # Prometheus 총정리 (with C# asp.net core)
+
+
 
 ## Prometheus Metrics type
 
@@ -323,6 +335,9 @@ rate(dotnet_collection_count_total[1m])
 
 4. Summary : Histogram과 유사하지만 quantile을 사용하여 값의 분포를 저장
 
+<br><br>
+
+---
 
 ## ASP.NET Core에서 Prometheus 사용하기
 
