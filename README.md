@@ -8,6 +8,10 @@ Prometheus &amp; Grafana 학습을 위한 레포지토리
 
 서버와 시스템 상태를 실시간으로 모니터링 합니다.
 
+- 이전에 작업했던 게임 레포지토리는 [오목 게임](https://github.com/yujinS0/Omok-Game)입니다.
+- 현재 프로젝트에 맞게 수정된 버전은 현 레포지토리의 [server 폴더에](./server/)에 위치합니다.
+- 따라서 클라이언트의 경우 [Omok Client](https://github.com/yujinS0/Omok-Game/tree/main/OmokClient)를 참고하세요.
+
 
 #### 최소 요구 조건
 - 게임 서버가 실행중인 머신의 정보 표시 (ex. cpu, memory 사용량 등)
