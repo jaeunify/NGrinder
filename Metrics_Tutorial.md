@@ -9,17 +9,28 @@
 - [디스크 용량 사용률](#디스크-용량-사용률)
 - [네트워크 사용률](#네트워크-사용률)
 - [CPU 이용률](#CPU-이용률)
-- [최근 1분간 1초마다 들어온 HTTP 요청의 평균 개수](#최근-1분간-1초마다-들어온-HTTP-요청의-평균-개수)
-- [최근 5분간 엔드포인트 별 HTTP 요청 평균 처리 시간(초)](#최근-5분간-엔드포인트-별-HTTP-요청-평균-처리-시간(초))
 
 ### [API 서버의 초당 요청 수 표시](#API-서버의-초당-요청-수-표시)
-- 
+- [최근 1분간 1초마다 들어온 HTTP 요청의 평균 개수](#최근-1분간-1초마다-들어온-HTTP-요청의-평균-개수)
+- [최근 5분간 엔드포인트 별 HTTP 요청 평균 처리 시간(초)](#최근-5분간-엔드포인트-별-HTTP-요청-평균-처리-시간(초))
+- [특정 API 누적 요청 수](#특정-API-누적-요청-수)
+- [특정 API 초당 요청 수](#특정-API-초당-요청-수)
+- [ASP.NET core 서버 내 Gauge metric을 통해 특정 API 모니터링하기](#ASP.NET-core-내-Gauge-Metric-활용해서-특정-API-모니터링하기)
 
 
-### [C#에서의 GC 정보]()
-- 
+
+### [C#에서의 GC 정보](#GC-정보)
+- [애플리케이션 내 Garbage Collection 총 수행 횟수](#애플리케이션-내-Garbage-Collection-총-수행-횟수)
+- [세대별 GC 수행 횟수](#세대별-GC-수행-횟수)
+- [세대별 GC 평균 수집 횟수](#세대별-GC-평균-수집-횟수)
 
 
+### [Prometheus 총정리 with C# asp.net core](#Prometheus-총정리-with-C#-asp.net-core)
+- [Prometheus Metrics type](#Prometheus-Metrics-type)
+- [ASP.NET Core에서 Prometheus 사용하기](#ASP.NET-Core에서-Prometheus-사용하기)
+
+ 
+---
 
 
 ## 머신 상태 모니터링
@@ -271,7 +282,7 @@ sum(game_server_fake_login)
 
 
 
-## C#에서의 GC 정보
+## GC 정보
 
 ### 애플리케이션 내 Garbage Collection 총 수행 횟수
 
@@ -386,50 +397,63 @@ rate(dotnet_collection_count_total[1m])
 
 #### CPU Load
 
+```promql
 sum by (mode) (rate(windows_cpu_time_total[5m]))
-
+```
 
 #### Memory Usage
 
+```promql
 windows_cs_physical_memory_bytes - windows_os_physical_memory_free_bytes
-
+```
 #### Network
 
+```promql
 rate(windows_net_bytes_sent_total[5m])
-
+```
 #### Disk
 
+```promql
 rate(windows_logical_disk_split_ios_total{volume !~"HarddiskVolume.+"}[5m])
-
+```
 #### GC (DotNet)
 
+```promql
 increase(dotnet_collection_count_total[5m])
-
+```
 #### CPU usage (DotNet)
 
+```promql
 avg by (instance) (irate(process_cpu_seconds_total[5m]))
-
+```
 5분 동안 각 인스턴스의 초당 CPU 사용 시간을 측정하여, 인스턴스별 평균 CPU 사용률을 계산
 
 #### Network (DotNet)
 
+```promql
 rate(dotnet_sockets_bytes_sent_total[5m])
 
 rate(dotnet_sockets_bytes_received_total[5m])
-
+```
 
 #### API Server 모니터링 (ASP.NET Core)
 
+```promql
 rate(http_request_duration_seconds_count[5m])
+```
 
 #### 소켓 Server 모니터링 (.Net Framework)
 
 현재 연결된 소켓 수
 
+```promql
 dotnet_sockets_connections_established_incoming_total
+```
 
 #### 받고/보내기 트래픽
 
+```promql
 rate(dotnet_sockets_bytes_sent_total[5m])
 
 rate(dotnet_sockets_bytes_received_total[5m])
+```
