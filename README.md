@@ -260,7 +260,9 @@ vi ~/prometheus/prometheus.yml
 
 ```
 
-### 3. prometheus.yml 파일을 생성한다. (이때 Prometheus 자기 자신을 모니터링하도록 구성했다)
+### 3. prometheus.yml 파일을 생성한다. 
+
+(이때 Prometheus 자기 자신을 모니터링하도록 구성했다)
 
 ```bash
 docker pull prom/prometheus
@@ -296,10 +298,11 @@ docker run -d --name prometheus \
 -v ~/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml: 로컬 설정 파일을 컨테이너 내부로 마운트
 
 
-### 5. 정상적으로 실행되었다면, 브라우저에서 localhost:9090으로 접속하여 Prometheus Web UI 확인이 가능하다.
+- 정상적으로 실행되었다면, 브라우저에서 localhost:9090으로 접속하여 Prometheus Web UI 확인이 가능하다.
 
 
-### 6. Prometheus 컨테이너 관리를 위한 docker 명령어
+
+### 5. Prometheus 컨테이너 관리를 위한 docker 명령어
 
 컨테이너 중지 : `docker stop prometheus`
 
@@ -315,9 +318,7 @@ docker compose 에서 특정 서비스만 빌드할 때
     ```
 
 
-
-
-### 7. Node exporter 사용하기
+### 6. Node exporter 사용하기
 
 exporter란, Prometheus가 모니터링할 수 있는 metric을 제공하는 엔드포인트(서버)를 생성하는 애플리케이션이다.
 - 여기서 말하는 엔드포인트란? 메트릭 데이터를 제공하는 URL 또는 네트워크 경로를 의미
