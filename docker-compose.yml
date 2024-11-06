@@ -11,6 +11,7 @@ services:
       - "3310:3306"
     volumes:
       - mysql-data:/var/lib/mysql
+      #- ./init-scripts:/docker-entrypoint-initdb.d  # 초기화 스크립트 연결
     networks:
       - game-network
     healthcheck:
