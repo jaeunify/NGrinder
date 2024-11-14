@@ -45,19 +45,21 @@ Grafana (시각화 및대시보드)
 
 # 목차
 
-[Prometheus](#Prometheus)
+[Prometheus](#prometheus)
 - [프로메테우스 아키텍처](#프로메테우스-아키텍처)
 - [기능](#기능)
-- [Metrics](#Metrics)
+- [Metrics](#metrics)
 
 [실습](#실습)
-- [기초 실습 및 Prometheus 확인](#기초-실습-및-Prometheus-확인)
-- [Alertmanager 설정하기](#Alertmanager-설정하기)
-- [Prometheus Web UI 대신 Grafana 사용하기](#Prometheus-Web-UI-대신-Grafana-사용하기)
+- [기초 실습 및 Prometheus 확인](#기초-실습-및-prometheus-확인)
+- [Alertmanager 설정하기](#alertmanager-설정하기)
+- [Prometheus Web UI 대신 Grafana 사용하기](#prometheus-web-ui-대신-grafana-사용하기)
 
-[Grafana](#Grafana)
+[Grafana](#grafana)
 
 [실습: 그라파나 대시보드 구성](#실습--그라파나-대시보드-구성)
+
+[Feedback & TODO](#feedback--todo)
 
 
 <br>
@@ -727,4 +729,59 @@ json settings 은 [grafana_dashboard_settings.json](./grafana/dashboard_settings
 ### API & Network
 
 ![](./img/my_grafana_api.png)
+
+
+----
+
+# Feedback & TODO
+
+
+## Node Exporter 관련 리소스 접근 제한 문제
+
+현재 레포지토리에서 설명하는 방식으로는 컨테이너 내부에서 Node Exporter를 실행하기 때문에,
+
+컨테이너가 접근 가능한 리소스가 제한되어 호스트 시스템 전체의 정보를 수집할 수 없다.
+
+## 해결방법
+
+#### 공식적으로 정확한 메트릭 수집을 위해 로컬에서 실행하는 것을 추천한다고 합니다.
+
+#### 1) 로컬에서 Node Exporter 수집 (호스트 시스템 정보를 읽어올 수 있도록)
+
+
+#### 2) 컨테이너가 호스트 시스템 메트릭에 접근할 수 있도록 설정
+
+  - Host 시스템 파일 마운트
+    ```yml
+      node-exporter:
+        image: prom/node-exporter
+        container_name: node-exporter
+        volumes:
+          - /proc:/host/proc:ro
+          - /sys:/host/sys:ro
+          - /:/rootfs:ro
+        command:
+          - "--path.procfs=/host/proc"
+          - "--path.rootfs=/rootfs"
+          - "--path.sysfs=/host/sys"
+          - "--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)"
+        networks:
+          - backend
+        ports:
+          - "9100:9100"
+    ```
+    
+  - Host Network Mode로 실행
+    + 컨테이너화한 Node Exporter의 네트워크 메트릭을 정상 수집하려면, docker-compose 파일에 아래처럼 설정을 포함시킨 후
+      ```yml
+      network_mode: host
+      ```
+    + 이후 prometheus.yml에서 node exporter 호스트 설정을 아래처럼 바꾼다
+      ```yml
+      static_configs:
+      - targets: ['host.docker.internal:9100']
+      ```
+    
+
+
 
