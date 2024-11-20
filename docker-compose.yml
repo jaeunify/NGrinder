@@ -112,6 +112,7 @@ services:
 
 networks:
   game-network:
+    external: true
 
 volumes:
   mysql-data:
