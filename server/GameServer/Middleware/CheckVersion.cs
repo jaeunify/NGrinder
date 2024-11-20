@@ -25,9 +25,16 @@ public class CheckVersion
         // /metrics 엔드포인트는 버전 체크를 생략 (Prometheus 스크랩)
         //if (context.Request.Path.StartsWithSegments("/metrics"))
         //{
-        //    await _next(context);
+        //    await _next(httpContext);
         //    return;
         //}
+
+        // Test API의 경우 생략 (Hello)
+        if (IsTestRequest(httpContext))
+        {
+            await _next(httpContext);
+            return;
+        }
 
         var appVersion = httpContext.Request.Headers["AppVersion"].ToString();
         var dataVersion = httpContext.Request.Headers["DataVersion"].ToString();
@@ -79,7 +86,11 @@ public class CheckVersion
 
         return true;
     }
-
+    private bool IsTestRequest(HttpContext context)
+    {
+        var formString = context.Request.Path.Value;
+        return string.Compare(formString, "/hello", StringComparison.OrdinalIgnoreCase) == 0;
+    }
     private class MiddlewareResponse
     {
         public ErrorCode Result { get; set; }

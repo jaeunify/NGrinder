@@ -29,6 +29,13 @@ public class CheckAuth
             return;
         }
 
+        // Test API의 경우 생략 (Hello)
+        if (IsTestRequest(context))
+        {
+            await _next(context);
+            return;
+        }
+
         // 
         if (IsFakeLoginRequest(context))
         {
@@ -137,6 +144,12 @@ public class CheckAuth
     {
         var formString = context.Request.Path.Value;
         return string.Compare(formString, "/fakelogin", StringComparison.OrdinalIgnoreCase) == 0;
+    }
+
+    private bool IsTestRequest(HttpContext context)
+    {
+        var formString = context.Request.Path.Value;
+        return string.Compare(formString, "/hello", StringComparison.OrdinalIgnoreCase) == 0;
     }
 
     private bool TryGetHeaders(HttpContext context, out string playerId, out string token)
