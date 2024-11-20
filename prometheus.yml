@@ -29,5 +29,6 @@ scrape_configs:
 
     - job_name: 'node_exporter'  # Node Exporter 모니터링 설정
       static_configs:
-        - targets: ['nodeexporter:9100'] # Docker Compose의 서비스 이름으로 접근
+        - targets: ["localhost:9100"]
+        #- targets: ['nodeexporter:9100'] # Docker Compose의 서비스 이름으로 접근
         #- targets: ['172.17.0.4:9100']  # Node Exporter의 엔드포인트 (docker 네트워크 주소 -> 추후 docker compose를 통해 같은 네트워크에 위치시키도록 수정)

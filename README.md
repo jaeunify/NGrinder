@@ -748,6 +748,8 @@ json settings 은 [grafana_dashboard_settings.json](./grafana/dashboard_settings
 
 #### 1) 로컬에서 Node Exporter 수집 (호스트 시스템 정보를 읽어올 수 있도록)
 
+  - [Prometheus 다운로드 페이지](https://prometheus.io/download/#node_exporter)에서 Node Exporter 를 다운
+  - 
 
 #### 2) 컨테이너가 호스트 시스템 메트릭에 접근할 수 있도록 설정
 
