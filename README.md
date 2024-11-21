@@ -748,8 +748,23 @@ json settings 은 [grafana_dashboard_settings.json](./grafana/dashboard_settings
 
 #### 1) 로컬에서 Node Exporter 수집 (호스트 시스템 정보를 읽어올 수 있도록)
 
-  - [Prometheus 다운로드 페이지](https://prometheus.io/download/#node_exporter)에서 Node Exporter 를 다운
-  - 
+  - [Prometheus 다운로드 페이지](https://prometheus.io/download/#node_exporter)에서 Node Exporter 확인 및 다운로드
+    - 아래 과정을 통해 Node Exporter를 로컬에서 실행
+	    ```bash
+	    tar xvfz node_exporter-1.2.2.linux-amd64.tar.gz
+	    cd node_exporter-1.2.2.linux-amd64
+	    ./node_exporter
+	    ```
+    - Prometheus 설정 파일에서 Node Exporter 타겟을 로컬로 변경
+        ```yml
+        scrape_configs:
+          - job_name: 'node_exporter'
+            static_configs:
+              - targets: ['localhost:9100']
+        ```
+      + 이때, 나의 경우 localhost 대신에, 호스트 네트워크의 IP(WSL) 확인 이후 IP 주소를 사용했다.
+      + `ip addr` 명령어로 호스트 네트워크의 IP 주소를 확인할 수 있다.
+      + wsl의 경우 eth0 네트워크 인터페이스의 주소를 확인하여 `inet 192.123.456.1`와 같은 형태로 확인이 가능하다. 
 
 #### 2) 컨테이너가 호스트 시스템 메트릭에 접근할 수 있도록 설정
 
