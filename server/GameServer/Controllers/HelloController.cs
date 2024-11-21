@@ -12,6 +12,7 @@ namespace GameServer.Controllers;
 public class HelloController : BaseController<HelloController> // ControllerBase
 {
     private readonly ILogger<HelloController> _logger;
+    private static readonly Gauge HelloGauge = Metrics.CreateGauge("game_server_hello", "Hello Metric");
 
     public HelloController(ILogger<HelloController> logger) : base(logger)
     {
@@ -21,6 +22,7 @@ public class HelloController : BaseController<HelloController> // ControllerBase
     [HttpPost]
     public async Task<HelloResponse> Hello()
     {
+        HelloGauge.Inc();
         try
         {
 
