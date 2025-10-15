@@ -70,7 +70,7 @@ CREATE TABLE `gamedb`.friend_request (
     PRIMARY KEY (send_player_uid, receive_player_uid)
 );
 
-create database masterdb;
+USE masterdb;
 CREATE TABLE IF NOT EXISTS `masterdb`.attendance_reward (
   day_seq INT,
   reward_item INT,
