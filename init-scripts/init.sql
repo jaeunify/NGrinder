@@ -2,7 +2,7 @@ create database hivedb;
 CREATE TABLE `hivedb`.`account` (
   account_uid BIGINT AUTO_INCREMENT PRIMARY KEY,
   hive_user_id VARCHAR(255) NOT NULL UNIQUE,
-  hive_user_pw CHAR(64) NOT NULL,  -- SHA-256 ï¿½Ø½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½×»ï¿½ 64 ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ú¿ï¿½
+  hive_user_pw CHAR(64) NOT NULL,  -- SHA-256 ÇØ½Ã °á°ú´Â Ç×»ó 64 ±æÀÌÀÇ ¹®ÀÚ¿­
   create_dt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   salt CHAR(64) NOT NULL
 );
@@ -26,15 +26,15 @@ CREATE TABLE `gamedb`.`player_info` (
   create_dt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 CREATE TABLE `gamedb`.`player_money` (
-  player_uid BIGINT NOT NULL PRIMARY KEY COMMENT 'ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ UID',
+  player_uid BIGINT NOT NULL PRIMARY KEY COMMENT 'ÇÃ·¹ÀÌ¾î UID',
   game_money BIGINT DEFAULT 0,
   diamond BIGINT DEFAULT 0
 );
 CREATE TABLE `gamedb`.player_item (
 	player_item_code BIGINT AUTO_INCREMENT PRIMARY KEY,
-    	player_uid BIGINT NOT NULL COMMENT 'ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ UID',
-    	item_code INT NOT NULL COMMENT 'ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ID',
-    	item_cnt INT NOT NULL COMMENT 'ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½'
+    	player_uid BIGINT NOT NULL COMMENT 'ÇÃ·¹ÀÌ¾î UID',
+    	item_code INT NOT NULL COMMENT '¾ÆÀÌÅÛ ID',
+    	item_cnt INT NOT NULL COMMENT '¾ÆÀÌÅÛ ¼ö'
 );
 CREATE TABLE `gamedb`.mailbox (
   mail_id BIGINT AUTO_INCREMENT NOT NULL PRIMARY KEY,
@@ -45,32 +45,32 @@ CREATE TABLE `gamedb`.mailbox (
   send_dt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   expire_dt TIMESTAMP NOT NULL,
   receive_dt TIMESTAMP NULL,
-  receive_yn TINYINT NOT NULL DEFAULT 0 COMMENT 'ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½',
+  receive_yn TINYINT NOT NULL DEFAULT 0 COMMENT '¼ö·É À¯¹«',
   player_uid BIGINT NOT NULL
 );
 CREATE TABLE `gamedb`.attendance (
     player_uid BIGINT NOT NULL PRIMARY KEY, 
-    attendance_cnt INT NOT NULL COMMENT 'ï¿½â¼® È½ï¿½ï¿½', 
-    recent_attendance_dt DATETIME COMMENT 'ï¿½Ö±ï¿½ ï¿½â¼® ï¿½Ï½ï¿½'
+    attendance_cnt INT NOT NULL COMMENT 'Ãâ¼® È½¼ö', 
+    recent_attendance_dt DATETIME COMMENT 'ÃÖ±Ù Ãâ¼® ÀÏ½Ã'
 );
 CREATE TABLE `gamedb`.friend (
-    player_uid BIGINT NOT NULL COMMENT 'ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ UID',
-    friend_player_uid BIGINT NOT NULL COMMENT 'Ä£ï¿½ï¿½ UID',
-    friend_player_nickname VARCHAR(27) NOT NULL COMMENT 'Ä£ï¿½ï¿½ ï¿½Ð³ï¿½ï¿½ï¿½',
-    create_dt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'ï¿½ï¿½ï¿½ï¿½ ï¿½Ï½ï¿½',
+    player_uid BIGINT NOT NULL COMMENT 'ÇÃ·¹ÀÌ¾î UID',
+    friend_player_uid BIGINT NOT NULL COMMENT 'Ä£±¸ UID',
+    friend_player_nickname VARCHAR(27) NOT NULL COMMENT 'Ä£±¸ ´Ð³×ÀÓ',
+    create_dt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '»ý¼º ÀÏ½Ã',
     PRIMARY KEY (player_uid, friend_player_uid)
 );
 CREATE TABLE `gamedb`.friend_request (
-    send_player_uid BIGINT NOT NULL COMMENT 'ï¿½ß¼ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ UID',
-    receive_player_uid BIGINT NOT NULL COMMENT 'ï¿½ï¿½ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ UID',
-    send_player_nickname VARCHAR(27) NOT NULL COMMENT 'ï¿½ß¼ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½Ð³ï¿½ï¿½ï¿½',
-    receive_player_nickname VARCHAR(27) NOT NULL COMMENT 'ï¿½ï¿½ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½Ð³ï¿½ï¿½ï¿½',
-    request_state TINYINT NOT NULL DEFAULT 0 COMMENT 'ï¿½ï¿½Ã» ï¿½ï¿½ï¿½ï¿½(0:ï¿½ï¿½ï¿½, 1:ï¿½ï¿½ï¿½ï¿½)',
-    create_dt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'ï¿½ï¿½ï¿½ï¿½ ï¿½Ï½ï¿½',
+    send_player_uid BIGINT NOT NULL COMMENT '¹ß¼Û ÇÃ·¹ÀÌ¾î UID',
+    receive_player_uid BIGINT NOT NULL COMMENT '¼ö·É ÇÃ·¹ÀÌ¾î UID',
+    send_player_nickname VARCHAR(27) NOT NULL COMMENT '¹ß¼Û ÇÃ·¹ÀÌ¾î ´Ð³×ÀÓ',
+    receive_player_nickname VARCHAR(27) NOT NULL COMMENT '¼ö·É ÇÃ·¹ÀÌ¾î ´Ð³×ÀÓ',
+    request_state TINYINT NOT NULL DEFAULT 0 COMMENT '¿äÃ» »óÅÂ(0:´ë±â, 1:¼ö¶ô)',
+    create_dt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '»ý¼º ÀÏ½Ã',
     PRIMARY KEY (send_player_uid, receive_player_uid)
 );
 
-USE masterdb;
+create database masterdb;
 CREATE TABLE IF NOT EXISTS `masterdb`.attendance_reward (
   day_seq INT,
   reward_item INT,
@@ -86,13 +86,13 @@ CREATE TABLE `masterdb`.item (
   item_code INT,
   name VARCHAR(64) NOT NULL,
   description VARCHAR(128) NOT NULL,
-  countable TINYINT NOT NULL COMMENT 'ï¿½ï¿½Ä¥ ï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ : 1'
+  countable TINYINT NOT NULL COMMENT 'ÇÕÄ¥ ¼ö ÀÖ´Â ¾ÆÀÌÅÛ : 1'
 );
 INSERT INTO `masterdb`.item (item_code, name, description, countable) VALUES
-(1, 'game_money', 'ï¿½ï¿½ï¿½ï¿½ ï¿½Ó´ï¿½(ï¿½Î°ï¿½ï¿½ï¿½ ï¿½ï¿½È­)', 1),
-(2, 'diamond', 'ï¿½ï¿½ï¿½Ì¾Æ¸ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È­)', 1),
-(3, 'ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½', 'ï¿½Ú½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ê¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½', 1),
-(4, 'ï¿½Ð³ï¿½ï¿½Óºï¿½ï¿½ï¿½', 'ï¿½âº» ï¿½Ð³ï¿½ï¿½Ó¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½', 1);
+(1, 'game_money', '°ÔÀÓ ¸Ó´Ï(ÀÎ°ÔÀÓ ÀçÈ­)', 1),
+(2, 'diamond', '´ÙÀÌ¾Æ¸óµå(À¯·á ÀçÈ­)', 1),
+(3, '¹«¸£±â ¾ÆÀÌÅÛ', 'ÀÚ½ÅÀÇ Â÷·Ê¿¡ ÅÏÀ» ¹«¸¦ ¼ö ÀÖÀ½', 1),
+(4, '´Ð³×ÀÓº¯°æ', '±âº» ´Ð³×ÀÓ¿¡¼­ º¯°æÇÒ ¼ö ÀÖÀ½', 1);
 
 CREATE TABLE `masterdb`.first_item (
     item_code INT,
